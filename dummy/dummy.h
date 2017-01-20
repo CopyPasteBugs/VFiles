@@ -12,10 +12,11 @@
 #include <CryAISystem/MovementRequest.h>
 #include <IActorSystem.h>
 
-#include "Player/ISimpleActor.h"
+//#include "Player/ISimpleActor.h"
 
 class CDummyEntity
 	: public IEntityComponent
+	, public IEntityPropertyGroup
 	, public IMovementActorAdapter
 	, public IAIPathAgent
 {
@@ -32,11 +33,16 @@ class CDummyEntity
 	};
 
 public:
-	//IEntityComponent
+	// IEntityComponent
 	virtual void Initialize() override;
 	virtual	void ProcessEvent(SEntityEvent &event) override;
-	virtual uint64 GetEventMask() const override { return BIT64(ENTITY_EVENT_RESET) | BIT64(ENTITY_EVENT_UPDATE); }
-	//IEntityComponent
+	virtual uint64 GetEventMask() const override { return (BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_RESET) | BIT64(ENTITY_EVENT_START_LEVEL)); }
+	// IEntityComponent
+
+	// IEntityPropertyGroup
+	virtual const char* GetLabel() const override { return "Dymmy"; };
+	virtual void SerializeProperties(Serialization::IArchive& archive) override;
+	// IEntityPropertyGroup
 
 
 	// IMovementActorAdapter

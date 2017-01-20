@@ -31,7 +31,6 @@ CRYREGISTER_CLASS(CDummyEntity)
 void CDummyEntity::Initialize()
 {
 	Reset();
-	//gEnv->pGameFramework->GetIActorSystem()->AddActor(GetEntity()->GetId(), this);
 }
 
 void CDummyEntity::ProcessEvent(SEntityEvent & event)
@@ -55,9 +54,28 @@ void CDummyEntity::ProcessEvent(SEntityEvent & event)
 		case ENTITY_EVENT_UPDATE:
 		{
 			SEntityUpdateContext* param = (SEntityUpdateContext*)event.nParam[0];
-			
-
+			Reset();
 		}
+		case ENTITY_EVENT_START_LEVEL:
+		{
+			if (!gEnv->IsEditor())
+			{
+				Reset();
+				InitAI();
+			}
+		}
+		default:
+			break;
+	}
+}
+
+void CDummyEntity::SerializeProperties(Serialization::IArchive & archive)
+{
+	
+	if (archive.isInput())
+	{ 
+		//Reset();
+		//InitAI();
 	}
 }
 
@@ -85,11 +103,11 @@ void CDummyEntity::Reset()
 
 	pe_player_dynamics playerDynamics;
 	playerDynamics.kAirControl = 0.0f;
+	playerDynamics.kAirResistance = 1.0;
 	playerDynamics.mass = physParams.mass;
 	physParams.pPlayerDynamics = &playerDynamics;
 
 	GetEntity()->Physicalize(physParams);
-
 }
 
 void CDummyEntity::ResetPF()
