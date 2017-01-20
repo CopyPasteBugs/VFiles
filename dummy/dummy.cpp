@@ -54,7 +54,6 @@ void CDummyEntity::ProcessEvent(SEntityEvent & event)
 		case ENTITY_EVENT_UPDATE:
 		{
 			SEntityUpdateContext* param = (SEntityUpdateContext*)event.nParam[0];
-			Reset();
 		}
 		case ENTITY_EVENT_START_LEVEL:
 		{
