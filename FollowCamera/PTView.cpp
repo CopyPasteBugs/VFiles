@@ -120,6 +120,13 @@ void CTankView::StartPositionCamera(float follow, float minFollow, float maxFoll
 	camParams.yaw = yaw;
 }
 
+void CTankView::ShakeCamera(float magnitude, float speed, float damping)
+{
+	camParams.shakeMagnitude = magnitude;
+	camParams.shakeSpeed = speed;
+	camParams.shakeDamping = damping;
+}
+
 void CTankView::OnViewRotate(float dt)
 {
 	if (pPlayer == nullptr) return;
@@ -132,7 +139,7 @@ void CTankView::OnViewRotate(float dt)
 	camParams.pitch = CLAMP(camParams.pitch, fRotationLimitsMinPitch, fRotationLimitsMaxPitch);
 
 	// Get adjust for follow distance
-	camParams.wheel = pPlayer->GetMouseDeltaWheel();
+	camParams.wheel = (int)pPlayer->GetMouseDeltaWheel();
 }
 
 void CTankView::OnViewMove(float dt)
@@ -140,11 +147,33 @@ void CTankView::OnViewMove(float dt)
 	Quat worldRotation = eCameraView->GetWorldRotation();
 	worldRotation.v.z = 0.0f;
 
+	// Test for view obstacles
+	static bool resultTest = false;
+	camParams.curFollow = TestViewForObstacle(camParams.curFollow, resultTest);
+	if (resultTest)
+	{
+		camParams.wheel = -120;
+		camParams.follow = camParams.curFollow;
+		camParams.followVel = 0;
+	}
+
 	// Adjust follow distance with mouse wheel 
-	if (camParams.wheel) camParams.follow -= (camParams.wheel * dt);
-	
+	if (camParams.wheel !=0)
+	{
+		camParams.follow -= (camParams.wheel * dt);
+		camParams.wheel = 0;
+	}
 	// Clamp follow distance
 	camParams.follow = CLAMP(camParams.follow, camParams.minFollow, camParams.maxFollow);
+
+	//// Shake Camera(noise offsets)
+	//camParams.shakeTime = camParams.shakeTime + dt * camParams.shakeSpeed;
+	//float magnitudeForce = sinf(camParams.shakeTime) * camParams.shakeMagnitude;
+	//Vec3 shakePos = Vec3(sinf(camParams.shakeTime*fShakeOffsetX)*magnitudeForce, cos(camParams.shakeTime*fShakeOffsetY)*magnitudeForce, 0.0f);
+	//camParams.shakeMagnitude -= camParams.shakeDamping * dt;
+	//if (camParams.shakeMagnitude < 0.0f) camParams.shakeMagnitude = 0.0f;
+
+	//eCameraShake->SetPos(shakePos);
 
 	// Set distance between cam and target
 	SpringFollow(dt);
@@ -166,7 +195,10 @@ void CTankView::OnViewMove(float dt)
 	eCameraAngle->SetRotation(angleOrientation);
 
 	// Shift View-helper(only forward/backward movements) on follow distate in eCameraAngle-space 
-	eCameraView->SetPos(Vec3(0, -camParams.curFollow, 0));
+	//eCameraView->SetPos(Vec3(0, -camParams.curFollow, 0));
+	eCameraView->SetPosRotScale(Vec3(0, -camParams.curFollow, 0), IDENTITY, Vec3(1,1,1));
+
+	resultTest = false;
 }
 
 void CTankView::SpringFollow(float dt)
@@ -203,4 +235,44 @@ void CTankView::SpringRotation(float dt)
 
 	camParams.curYaw = camParams.curYaw + camParams.curYawVel * dt;
 	camParams.curPitch = camParams.curPitch + camParams.curPitchVel * dt;
+}
+
+float CTankView::TestViewForObstacle(float curFollowDistance, bool & hasObstacle)
+{
+	hasObstacle = false;
+	Vec3 viewForward = eCameraView->GetWorldRotation() * -FORWARD_DIRECTION;
+	Vec3 direction = viewForward * camParams.curFollow;
+
+	int hit = 0;
+	Vec3 origin = eCameraTarget->GetWorldPos();
+	ray_hit rayHit;
+
+	const int physSkipNum = 1;
+	IPhysicalEntity* physSkip[physSkipNum];
+	physSkip[0] = GetEntity()->GetPhysics();
+
+	unsigned int flags = rwi_stop_at_pierceable | rwi_colltype_any | rwi_ignore_back_faces;
+	
+	hit = gEnv->pPhysicalWorld->RayWorldIntersection(origin, direction, entity_query_flags::ent_static, flags, &rayHit, 1, physSkip, physSkipNum);
+	if (hit)
+	{
+		hasObstacle = true;
+		
+		// debug hit
+		{
+			static IPersistantDebug* debug = gEnv->pGameFramework->GetIPersistantDebug();
+			debug->Begin("ObstacleTestFromTargetToCamera", false);
+			Vec3 lineStart = origin;
+			//Vec3 lineEnd = origin + (direction.normalized() * 10.0f);
+			Vec3 lineEnd = rayHit.pt;
+			float timeOut = 5.0f;
+			debug->AddLine(lineStart, lineEnd, ColorF(1.0f, 0.0f, 0.0f), timeOut);
+		}
+
+		// return shortest distance
+		return min(rayHit.dist, curFollowDistance);
+	}
+
+	// No hit with obstacles return same value
+	return curFollowDistance;
 }

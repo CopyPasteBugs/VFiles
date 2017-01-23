@@ -60,6 +60,7 @@ public:
 	void FreeCameraHelperEntities();
 
 	void StartPositionCamera(float follow, float minFollow, float maxFollow, float pitch, float yaw);
+	void ShakeCamera(float magnitude, float speed, float damping);
 	void SetCameraTarget(IEntity* target) { eCameraTarget = target; };
 	IEntity* GetCameraTarget() { return eCameraTarget; };
 
@@ -81,6 +82,7 @@ public:
 	void SpringPosition(float dt);
 	void SpringRotation(float dt);
 
+	float TestViewForObstacle(float curFollowDistance, bool& hasObstacle);
 
 protected:
 	CPlayerTank* pPlayer;
@@ -97,4 +99,7 @@ protected:
 	float fRotationSpeedPitch = 0.05f;
 	float fRotationLimitsMinPitch = -0.84f;
 	float fRotationLimitsMaxPitch = 1.3f;
+
+	float fShakeOffsetX = 3.0f;
+	float fShakeOffsetY = 1.0f;
 };

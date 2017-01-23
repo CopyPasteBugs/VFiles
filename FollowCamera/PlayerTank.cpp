@@ -338,7 +338,11 @@ bool CPlayerTank::OnActionMouseWheelDown(EntityId entityId, const ActionId & act
 
 bool CPlayerTank::OnActionJump(EntityId entityId, const ActionId & actionId, int activationMode, float value)
 {
-	if (activationMode == eIS_Pressed) requestJump = true;
+	if (activationMode == eIS_Pressed)
+	{
+		requestJump = true;
+		pView->ShakeCamera(3.0f, 5.0f, 1.0f);
+	}
 	return true;
 }
 
