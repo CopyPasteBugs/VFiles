@@ -6,8 +6,12 @@
 #include <IActorSystem.h>
 
 #include "PlayerTank\PTView.h"
+#include "PlayerTank\PTFiring.h"
+#include "AreaTrigger\MyAreaTrigger.h"
 
 class CPlayerTank;
+
+
 
 class CPlayerTank
 	: public CGameObjectExtensionHelper<CPlayerTank, ISimpleExtension>
@@ -35,11 +39,11 @@ public:
 	CPlayerTank();
 	virtual ~CPlayerTank();
 
-	// ISimpleActor
+	// ISimpleExtension
 	virtual bool Init(IGameObject* pGameObject) override;
 	virtual void PostInit(IGameObject* pGameObject) override;
 	virtual void ProcessEvent(SEntityEvent& event) override;
-	// ~ISimpleActor
+	// ~ISimpleExtension
 
 	// IActionListener
 	virtual void OnAction(const ActionId &action, int activationMode, float value) override;
@@ -82,7 +86,10 @@ protected:
 	bool OnActionMouseWheelDown(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 
 	bool OnActionJump(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	
+	bool OnActionFindWay(EntityId entityId, const ActionId & actionId, int activationMode, float value);
+	bool OnExit(EntityId entityId, const ActionId & actionId, int activationMode, float value);
+
+
 	// Movement
 	// Get the stats from latest physics thread update
 	void GetLatestPhysicsStats(IPhysicalEntity &physicalEntity);
@@ -92,6 +99,8 @@ protected:
 
 	void OnResetState();
 
+	const CTankView* GetView() { return pView; };
+	const CTankFiring* GetFiring() { return pFire; };
 
 protected:
 	// Input
@@ -121,6 +130,7 @@ protected:
 	float fViewOffsetZ = 1.0f;
 
 	CTankView* pView;
+	CTankFiring* pFire;
 
 	IEntity* pParticleHelper;
 };

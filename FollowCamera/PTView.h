@@ -67,13 +67,12 @@ public:
 	Quat GetViewRotation() { return eCameraView->GetWorldRotation(); };
 	Quat GetViewRotationPlane()
 	{
-		Quat q = eCameraView->GetWorldRotation();
-		q.v.y = 0.0f;
-		return q;
+		return GetCameraRootRotation();
 	};
 
-	Vec3 GetViewFoward() { return GetViewRotation() * FORWARD_DIRECTION; };
-	Vec3 GetViewFowardPlane() { return GetViewRotationPlane() * FORWARD_DIRECTION; };
+	Vec3 GetViewFoward() { return GetViewRotation() * FORWARD_DIRECTION; }; // world rot
+	Quat GetCameraRootRotation() { return eCameraRoot->GetWorldRotation(); }; // on plane rotation
+	Vec3 GetCameraRootForward() { return eCameraRoot->GetWorldRotation() * FORWARD_DIRECTION; }; // on plane dir
 
 	void OnViewRotate(float dt);
 	void OnViewMove(float dt);

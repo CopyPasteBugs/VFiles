@@ -60,6 +60,7 @@ void CTankView::InitCameraHelperEntities()
 
 	eCameraRoot = gEnv->pEntitySystem->SpawnEntity(spawnParams);
 	CRY_ASSERT(eCameraRoot != nullptr);
+	eCameraRoot->SetName("CameraRoot");
 
 	// Shake child of root
 	SEntitySpawnParams spawnParamsShake;
@@ -71,6 +72,7 @@ void CTankView::InitCameraHelperEntities()
 	eCameraShake = gEnv->pEntitySystem->SpawnEntity(spawnParams);
 	CRY_ASSERT(eCameraShake != nullptr);
 	eCameraRoot->AttachChild(eCameraShake);
+	eCameraShake->SetName("CameraShake");
 
 	// Angle child of Shake
 	SEntitySpawnParams spawnParamsAngle;
@@ -81,6 +83,7 @@ void CTankView::InitCameraHelperEntities()
 	eCameraAngle = gEnv->pEntitySystem->SpawnEntity(spawnParamsAngle);
 	CRY_ASSERT(eCameraAngle != nullptr);
 	eCameraShake->AttachChild(eCameraAngle);
+	eCameraAngle->SetName("eCameraAngle");
 
 	//View child of Angle (Camera's postion and orientation)
 	SEntitySpawnParams spawnParamsView;
@@ -91,6 +94,7 @@ void CTankView::InitCameraHelperEntities()
 	eCameraView = gEnv->pEntitySystem->SpawnEntity(spawnParamsView);
 	CRY_ASSERT(eCameraView != nullptr);
 	eCameraAngle->AttachChild(eCameraView);
+	eCameraView->SetName("eCameraView");
 
 	//GetEntity()->DetachThis(IEntity::EAttachmentFlags::ATTACHMENT_KEEP_TRANSFORMATION);
 
@@ -260,13 +264,13 @@ float CTankView::TestViewForObstacle(float curFollowDistance, bool & hasObstacle
 		
 		// debug hit
 		{
-			static IPersistantDebug* debug = gEnv->pGameFramework->GetIPersistantDebug();
-			debug->Begin("ObstacleTestFromTargetToCamera", false);
-			Vec3 lineStart = origin;
-			//Vec3 lineEnd = origin + (direction.normalized() * 10.0f);
-			Vec3 lineEnd = rayHit.pt;
-			float timeOut = 5.0f;
-			debug->AddLine(lineStart, lineEnd, ColorF(1.0f, 0.0f, 0.0f), timeOut);
+			//static IPersistantDebug* debug = gEnv->pGameFramework->GetIPersistantDebug();
+			//debug->Begin("ObstacleTestFromTargetToCamera", false);
+			//Vec3 lineStart = origin;
+			////Vec3 lineEnd = origin + (direction.normalized() * 10.0f);
+			//Vec3 lineEnd = rayHit.pt;
+			//float timeOut = 5.0f;
+			//debug->AddLine(lineStart, lineEnd, ColorF(1.0f, 0.0f, 0.0f), timeOut);
 		}
 
 		// return shortest distance

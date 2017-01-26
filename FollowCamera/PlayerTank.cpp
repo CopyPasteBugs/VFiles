@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "PlayerTank.h"
 #include "PlayerTank\PTView.h"
+#include "PlayerTank\PTFiring.h"
+
 
 #include "GamePlugin.h"
 
@@ -8,6 +10,9 @@
 
 #include <Cry3DEngine/I3DEngine.h>
 #include <CryParticleSystem/IParticlesPfx2.h>
+#include <CryAnimation/ICryAnimation.h>
+
+#include "Enemy\Enemy.h"
 
 class CPlayerTankRegistrator
 	: public IEntityRegistrator
@@ -16,6 +21,8 @@ class CPlayerTankRegistrator
 	{
 		CGamePlugin::RegisterEntityWithDefaultComponent<CPlayerTank>("PlayerTank");
 		CGamePlugin::RegisterEntityComponent<CTankView>("TankView");
+		CGamePlugin::RegisterEntityComponent<CTankFiring>("TankFiring");
+
 	}
 	virtual void Unregister() override
 	{
@@ -80,13 +87,17 @@ void CPlayerTank::PostInit(IGameObject *pGameObject)
 	// Movement Init 
 	{
 		pGameObject->EnableUpdateSlot(this, 0);
-
 	}
 
 	// View Init 
 	{
 		//pGameObject->CaptureView(this);
 		pView = static_cast<CTankView *>(GetGameObject()->AcquireExtension("TankView"));
+	}
+
+	// Firing Init
+	{
+		pFire = static_cast<CTankFiring *>(GetGameObject()->AcquireExtension("TankFiring"));
 	}
 
 	// Shake child of root
@@ -209,6 +220,9 @@ void CPlayerTank::InitializeActionHandler()
 
 	m_actionHandler.AddHandler(ActionId("shoot"), &CPlayerTank::OnActionShoot);
 	m_actionHandler.AddHandler(ActionId("jump"), &CPlayerTank::OnActionJump);
+	m_actionHandler.AddHandler(ActionId("findway"), &CPlayerTank::OnActionFindWay);
+	m_actionHandler.AddHandler(ActionId("exit"), &CPlayerTank::OnExit);
+
 
 }
 
@@ -252,7 +266,7 @@ void CPlayerTank::OnResetState()
 
 	SEntityPhysicalizeParams physParams;
 	physParams.type = PE_LIVING;
-	physParams.nSlot = 0;
+	physParams.nSlot = -1;
 	physParams.mass = 90.0f;
 
 	pe_player_dimensions playerDimensions;
@@ -270,7 +284,7 @@ void CPlayerTank::OnResetState()
 
 	pe_player_dynamics playerDynamics;
 	//playerDynamics.kAirControl = 0.5f;
-	playerDynamics.kAirResistance = 0.9;
+	playerDynamics.kAirResistance = 1.0f;
 	playerDynamics.mass = physParams.mass;
 	physParams.pPlayerDynamics = &playerDynamics;
 
@@ -321,6 +335,28 @@ bool CPlayerTank::OnActionMouseRotatePitch(EntityId entityId, const ActionId & a
 
 bool CPlayerTank::OnActionShoot(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
+	// Only fire on press, not release
+	if (activationMode == eIS_Pressed)
+	{
+		//auto *pCharacter = GetEntity()->GetCharacter(0);
+	 
+		if (pFire != nullptr)
+		{
+			//auto *pBarrelOutAttachment = pCharacter->GetIAttachmentManager()->GetInterfaceByName("BulletSpawnPlace");
+
+			if (pFire->GetBulletSpawnEntity() != nullptr)
+			{
+				//QuatTS bulletOrigin = pBarrelOutAttachment->GetAttWorldAbsolute();
+
+				//IEntity * e = pFire->GetBulletSpawnEntity();
+				Vec3 dir = pView->GetCameraRootForward();
+				Vec3 startPos = GetEntity()->GetWorldPos() + (dir * 1.0f);
+				
+				pFire->RequestFire(startPos, pView->GetCameraRootRotation());
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -343,6 +379,36 @@ bool CPlayerTank::OnActionJump(EntityId entityId, const ActionId & actionId, int
 		requestJump = true;
 		pView->ShakeCamera(3.0f, 5.0f, 1.0f);
 	}
+	return true;
+}
+
+bool CPlayerTank::OnActionFindWay(EntityId entityId, const ActionId & actionId, int activationMode, float value)
+{
+	auto *pEntityIterator = gEnv->pEntitySystem->GetEntityIterator();
+	pEntityIterator->MoveFirst();
+
+	auto *pSpawnerClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("Enemy");
+	//auto extensionId = gEnv->pGameFramework->GetIGameObjectSystem()->GetID("Dummy");
+
+	while (!pEntityIterator->IsEnd())
+	{
+		IEntity *pEntity = pEntityIterator->Next();
+
+		if (pEntity->GetClass() != pSpawnerClass)
+			continue;
+
+		auto* enemy = pEntity->GetComponent<CEnemy>();
+
+		enemy->GoForAll();
+		break;
+	}
+
+	return true;
+}
+
+bool CPlayerTank::OnExit(EntityId entityId, const ActionId & actionId, int activationMode, float value)
+{
+	gEnv->pSystem->Quit();
 	return true;
 }
 
@@ -373,7 +439,7 @@ void CPlayerTank::UpdateMovementRequest(float frameTime, IPhysicalEntity & physi
 		//moveAction.dir = GetEntity()->GetWorldRotation() * GetLocalMoveDirection() * moveSpeed * frameTime;
 		
 		// Now, we convert local movement (pressing on the keys(left, right...)) into View plane movement
-		moveAction.dir = pView->GetViewRotationPlane() * GetLocalMoveDirection() * moveSpeed * frameTime;
+		moveAction.dir = pView->GetCameraRootRotation() * GetLocalMoveDirection() * moveSpeed * frameTime;
 
 		// Dispatch the movement request
 		physicalEntity.Action(&moveAction);
