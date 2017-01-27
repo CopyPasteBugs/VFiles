@@ -34,7 +34,7 @@ CFlowNode_MyName::CFlowNode_MyName(SActivationInfo* pActInfo)
 	// This means from now on you will get ProcessEvent calls with eFE_Update event.
 	// To be removed again from this list call the same function with false as the second parameter.
 	// Frequency: you will get 1 ProcessEvent(eFE_Updated) call per Game update call.
-	//pActInfo->pGraph->SetRegularlyUpdated(pActInfo->myID, true);
+	pActInfo->pGraph->SetRegularlyUpdated(pActInfo->myID, true);
 };
 
 IFlowNodePtr CFlowNode_MyName::Clone(SActivationInfo *pActInfo)
