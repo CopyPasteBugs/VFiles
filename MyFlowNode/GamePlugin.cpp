@@ -12,12 +12,9 @@
 
 IEntityRegistrator *IEntityRegistrator::g_pFirst = nullptr;
 IEntityRegistrator *IEntityRegistrator::g_pLast = nullptr;
-//
+
 CAutoRegFlowNodeBase * CAutoRegFlowNodeBase::m_pFirst = nullptr;
 CAutoRegFlowNodeBase * CAutoRegFlowNodeBase::m_pLast = nullptr;
-
-//CAutoRegFlowNodeBaseZero * CAutoRegFlowNodeBaseZero::m_pFirst = nullptr;
-//CAutoRegFlowNodeBaseZero * CAutoRegFlowNodeBaseZero::m_pLast = nullptr;
 
 CGamePlugin::~CGamePlugin()
 {
