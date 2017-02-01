@@ -29,6 +29,8 @@ public:
 		eOutputPorts_Enabled,
 		eOutputPorts_Enter,
 		eOutputPorts_Leave,
+		eOutputPorts_GuestEntityId,
+		eOutputPorts_AreaEntityId,
 	};
 
 public:

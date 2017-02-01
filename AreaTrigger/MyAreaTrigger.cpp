@@ -31,6 +31,9 @@ class CAreaTriggerRegistrator : public IEntityRegistrator
 		pFlowNodeFactory->m_outputs.push_back(OutputPortConfig<bool>("Enabled"));
 		pFlowNodeFactory->m_outputs.push_back(OutputPortConfig<bool>("Enter"));
 		pFlowNodeFactory->m_outputs.push_back(OutputPortConfig<bool>("Leave"));
+		pFlowNodeFactory->m_outputs.push_back(OutputPortConfig<EntityId>("GuestEntityId"));
+		pFlowNodeFactory->m_outputs.push_back(OutputPortConfig<EntityId>("AreaEntityId"));
+
 
 		pFlowNodeFactory->Close();
 	}
@@ -89,6 +92,8 @@ void CMyAreaTriggerEntity::ProcessEvent(SEntityEvent& event)
 		IEntity * pEntity = gEnv->pEntitySystem->GetEntity((EntityId)event.nParam[0]);		
 		guest = pEntity;
 		ActivateFlowNodeOutput(eOutputPorts_Enter, TFlowInputData((EntityId)event.nParam[0]));
+		ActivateFlowNodeOutput(eOutputPorts_GuestEntityId, TFlowInputData(pEntity->GetId()));
+		ActivateFlowNodeOutput(eOutputPorts_AreaEntityId, TFlowInputData(GetEntityId()));
 		gEnv->pLog->Log("%s: - entity entered to MyAreaTrigger", pEntity->GetName());	
 		break;
 	}
@@ -103,6 +108,8 @@ void CMyAreaTriggerEntity::ProcessEvent(SEntityEvent& event)
 		data.Set<EntityId>((EntityId)event.nParam[0]);
 		data.SetUserFlag(true);
 		ActivateFlowNodeOutput(eOutputPorts_Leave, data);
+		ActivateFlowNodeOutput(eOutputPorts_GuestEntityId, TFlowInputData(pEntity->GetId()));
+		ActivateFlowNodeOutput(eOutputPorts_AreaEntityId, TFlowInputData(GetEntityId()));
 		gEnv->pLog->Log("%s: - entity leave MyAreaTrigger", pEntity->GetName());
 
 		break;
@@ -119,6 +126,7 @@ void CMyAreaTriggerEntity::ProcessEvent(SEntityEvent& event)
 		if (!gEnv->IsEditor())
 		{
 			OnResetState();
+
 		}
 	}
 	}

@@ -222,6 +222,8 @@ void CPlayerTank::InitializeActionHandler()
 	m_actionHandler.AddHandler(ActionId("jump"), &CPlayerTank::OnActionJump);
 	m_actionHandler.AddHandler(ActionId("findway"), &CPlayerTank::OnActionFindWay);
 	m_actionHandler.AddHandler(ActionId("exit"), &CPlayerTank::OnExit);
+	m_actionHandler.AddHandler(ActionId("use"), &CPlayerTank::OnUse);
+
 
 
 }
@@ -256,6 +258,7 @@ void CPlayerTank::HandleInputFlagChange(EInputFlags flags, int activationMode, E
 
 void CPlayerTank::OnResetState()
 {
+	bPlayerWantsUse = false;
 	m_inputFlags = 0;
 	m_mouseDeltaRotation = ZERO;
 	m_mouseDeltaWheel = 0.0f;
@@ -289,6 +292,19 @@ void CPlayerTank::OnResetState()
 	physParams.pPlayerDynamics = &playerDynamics;
 
 	GetEntity()->Physicalize(physParams);
+}
+
+bool CPlayerTank::OnUse(EntityId entityId, const ActionId & actionId, int activationMode, float value)
+{
+	if (activationMode == eIS_Pressed)
+		SetUseFlag(true);
+
+	if (activationMode == eIS_Released)
+		SetUseFlag(false);
+
+
+
+	return true;
 }
 
 bool CPlayerTank::OnActionF(EntityId entityId, const ActionId & actionId, int activationMode, float value)
@@ -343,17 +359,11 @@ bool CPlayerTank::OnActionShoot(EntityId entityId, const ActionId& actionId, int
 		if (pFire != nullptr)
 		{
 			//auto *pBarrelOutAttachment = pCharacter->GetIAttachmentManager()->GetInterfaceByName("BulletSpawnPlace");
-
-			if (pFire->GetBulletSpawnEntity() != nullptr)
-			{
-				//QuatTS bulletOrigin = pBarrelOutAttachment->GetAttWorldAbsolute();
-
-				//IEntity * e = pFire->GetBulletSpawnEntity();
-				Vec3 dir = pView->GetCameraRootForward();
-				Vec3 startPos = GetEntity()->GetWorldPos() + (dir * 1.0f);
-				
-				pFire->RequestFire(startPos, pView->GetCameraRootRotation());
-			}
+			//QuatTS bulletOrigin = pBarrelOutAttachment->GetAttWorldAbsolute();
+			//IEntity * e = pFire->GetBulletSpawnEntity();
+			Vec3 dir = pView->GetCameraRootForward();
+			Vec3 startPos = GetEntity()->GetWorldPos() + dir;
+			pFire->RequestFire(startPos, pView->GetCameraRootRotation());
 		}
 	}
 

@@ -8,6 +8,9 @@ CRYREGISTER_CLASS(CPlayerTankMovement)
 
 void CPlayerTankMovement::Initialize()
 {
+	// Active for Update mask working
+	GetEntity()->Activate(true);
+
 	// Get main component of host Entity for internal using
 	pTank = static_cast<CPlayerTank *>(GetEntity()->GetComponent<CPlayerTank>());
 }

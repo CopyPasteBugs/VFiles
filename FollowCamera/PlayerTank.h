@@ -67,10 +67,13 @@ public:
 	//virtual void UpdateView(SViewParams &viewParams) override;
 	//virtual void PostUpdateView(SViewParams &viewParams) override {}
 	// ~IGameObjectView
+	const bool GetUseFlag() { return bPlayerWantsUse; };
+	void SetUseFlag(bool state) { bPlayerWantsUse = state; };
 
 protected:
 	void InitializeActionHandler();
 	void HandleInputFlagChange(EInputFlags flags, int activationMode, EInputFlagType type = eInputFlagType_Hold);
+	bool OnUse(EntityId entityId, const ActionId & actionId, int activationMode, float value);
 	bool OnActionF(EntityId entityId, const ActionId & actionId, int activationMode, float value);
 	bool OnActionMoveLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveRight(EntityId entityId, const ActionId& actionId, int activationMode, float value);
@@ -89,7 +92,6 @@ protected:
 	bool OnActionFindWay(EntityId entityId, const ActionId & actionId, int activationMode, float value);
 	bool OnExit(EntityId entityId, const ActionId & actionId, int activationMode, float value);
 
-
 	// Movement
 	// Get the stats from latest physics thread update
 	void GetLatestPhysicsStats(IPhysicalEntity &physicalEntity);
@@ -101,6 +103,7 @@ protected:
 
 	const CTankView* GetView() { return pView; };
 	const CTankFiring* GetFiring() { return pFire; };
+
 
 protected:
 	// Input
@@ -133,4 +136,6 @@ protected:
 	CTankFiring* pFire;
 
 	IEntity* pParticleHelper;
+
+	bool bPlayerWantsUse;
 };

@@ -57,6 +57,7 @@ void CTankView::InitCameraHelperEntities()
 	spawnParams.vPosition = GetEntity()->GetWorldPos();
 	spawnParams.vScale = Vec3(1, 1, 1);
 	spawnParams.qRotation = IDENTITY;
+	spawnParams.nFlags = ENTITY_FLAG_CLIENT_ONLY;
 
 	eCameraRoot = gEnv->pEntitySystem->SpawnEntity(spawnParams);
 	CRY_ASSERT(eCameraRoot != nullptr);
@@ -68,6 +69,7 @@ void CTankView::InitCameraHelperEntities()
 	spawnParamsShake.vPosition = Vec3(0, 0, 0);
 	spawnParamsShake.vScale = Vec3(1, 1, 1);
 	spawnParamsShake.qRotation = IDENTITY;
+	spawnParamsShake.nFlags = ENTITY_FLAG_CLIENT_ONLY;
 
 	eCameraShake = gEnv->pEntitySystem->SpawnEntity(spawnParams);
 	CRY_ASSERT(eCameraShake != nullptr);
@@ -80,6 +82,7 @@ void CTankView::InitCameraHelperEntities()
 	spawnParamsAngle.vPosition = Vec3(0, 0, 0);
 	spawnParamsAngle.vScale = Vec3(1, 1, 1);
 	spawnParamsAngle.qRotation = IDENTITY;
+	spawnParamsAngle.nFlags = ENTITY_FLAG_CLIENT_ONLY;
 	eCameraAngle = gEnv->pEntitySystem->SpawnEntity(spawnParamsAngle);
 	CRY_ASSERT(eCameraAngle != nullptr);
 	eCameraShake->AttachChild(eCameraAngle);
@@ -91,6 +94,7 @@ void CTankView::InitCameraHelperEntities()
 	spawnParamsView.vPosition = Vec3(0, 0, 0);
 	spawnParamsView.vScale = Vec3(1, 1, 1);
 	spawnParamsView.qRotation = IDENTITY;
+	spawnParamsView.nFlags = ENTITY_FLAG_CLIENT_ONLY;
 	eCameraView = gEnv->pEntitySystem->SpawnEntity(spawnParamsView);
 	CRY_ASSERT(eCameraView != nullptr);
 	eCameraAngle->AttachChild(eCameraView);
