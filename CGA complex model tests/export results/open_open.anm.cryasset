@@ -1,0 +1,12 @@
+<cryasset>
+ <AssetMetadata version="0" type="MeshAnimation" guid="{514E9DD3-A2C8-43EB-BDC3-846ECC63B71D}" source="door.dae">
+  <Files>
+   <File path="open_open.anm"/>
+  </Files>
+  <Details>
+   <Detail name="materialCount">0</Detail>
+   <Detail name="triangleCount">0</Detail>
+   <Detail name="vertexCount">0</Detail>
+  </Details>
+ </AssetMetadata>
+</cryasset>
