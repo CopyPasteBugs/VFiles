@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="MeshAnimation" guid="{514E9DD3-A2C8-43EB-BDC3-846ECC63B71D}" source="door.dae">
+ <AssetMetadata version="0" type="MeshAnimation" guid="{6ADADC00-6FD7-3A1C-F3AB-50AAD1B8D76F}" source=".dae">
   <Files>
    <File path="open_open.anm"/>
   </Files>
