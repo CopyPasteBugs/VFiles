@@ -74,20 +74,18 @@ void CPlayer::ProcessEvent(SEntityEvent & event)
 	}
 	case ENTITY_EVENT_UPDATE:
 	{
-			SEntityUpdateContext* param = (SEntityUpdateContext*)event.nParam[0];
+			//SEntityUpdateContext* param = (SEntityUpdateContext*)event.nParam[0];
 
-			if (param)
-			{
+			float dt = gEnv->pTimer->GetFrameTime();
 
-				UpdateMovement(param);
-				// Update if needed all child component from host Entity's component
+			UpdateMovement(dt);
+			// Update if needed all child component from host Entity's component
+			//if (pInput) pInput->Update(param);
+			//if (pAttack) pAttack->Update(param);
+			//if (pMarker) pMarker->Update(param);
 
-				//if (pInput) pInput->Update(param);
-				//if (pAttack) pAttack->Update(param);
-				//if (pMarker) pMarker->Update(param);
-
-				if (pView) pView->Update(param);
-			}
+			if (pView) pView->Update(dt);
+			
 			break;
 	}
 	case ENTITY_EVENT_START_LEVEL:
@@ -182,12 +180,12 @@ void CPlayer::LoadModel()
 	GetEntity()->LoadGeometry(0, "Assets/Objects/Default/primitive_sphere_small.cgf");
 }
 
-void CPlayer::Update(SEntityUpdateContext* ctx)
+void CPlayer::Update(float dt)
 {
-	UpdateMovement(ctx);
+	UpdateMovement(dt);
 }
 
-void CPlayer::UpdateMovement(SEntityUpdateContext* ctx)
+void CPlayer::UpdateMovement(float dt)
 {
 	// Movement
 	{
@@ -199,7 +197,7 @@ void CPlayer::UpdateMovement(SEntityUpdateContext* ctx)
 			GetLatestPhysicsStats(*pPhysicalEntity);
 
 			// Send latest input data to physics indicating desired movement direction
-			UpdateMovementRequest(ctx->fFrameTime, *pPhysicalEntity);
+			UpdateMovementRequest(dt, *pPhysicalEntity);
 		}
 	}
 	// Movement	

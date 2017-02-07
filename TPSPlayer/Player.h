@@ -44,8 +44,8 @@ protected:
 	void OnResetState();
 	void Physicalize();
 	void LoadModel();
-	void Update(SEntityUpdateContext* ctx);
-	void UpdateMovement(SEntityUpdateContext* ctx);
+	void Update(float dt);
+	void UpdateMovement(float dt);
 	void GetLatestPhysicsStats(IPhysicalEntity &physicalEntity);
 	void UpdateMovementRequest(float frameTime, IPhysicalEntity &physicalEntity);
 

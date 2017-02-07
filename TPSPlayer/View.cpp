@@ -33,10 +33,10 @@ void CView::OnShutDown()
 	FreeCameraHelperEntities();
 }
 
-void CView::Update(SEntityUpdateContext* param)
+void CView::Update(float dt)
 {	
-	OnViewRotate(param->fFrameTime);
-	OnViewMove(param->fFrameTime);
+	OnViewRotate(dt);
+	OnViewMove(dt);
 
 	//viewParams.blend = false;
 	//viewParams.rotation = eCameraView->GetWorldRotation();

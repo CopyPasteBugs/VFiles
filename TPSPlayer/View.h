@@ -49,7 +49,7 @@ public:
 	virtual void OnShutDown() override;
 	// IEntityComponent
 
-	void Update(SEntityUpdateContext* param);
+	void Update(float dt);
 	void CaptureView(IEntity* viewHostEntity);
 
 	void StartPositionCamera(float follow, float minFollow, float maxFollow, float pitch, float yaw);
