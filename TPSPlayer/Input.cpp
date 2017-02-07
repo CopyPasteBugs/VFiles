@@ -10,6 +10,7 @@ CRYREGISTER_CLASS(CInput)
 
 void CInput::Initialize()
 {
+	mouseDeltaRotation = Vec2(0, 0);
 	OnResetState();
 }
 
@@ -84,13 +85,16 @@ void CInput::OnResetState()
 	keyMap[EKeyId::eKI_Space] = ActionId("jump");
 	keyMap[EKeyId::eKI_Escape] = ActionId("exit");
 	keyMap[EKeyId::eKI_F] = ActionId("findway");
-	keyMap[EKeyId::eKI_R] = ActionId("use2");
+	keyMap[EKeyId::eKI_E] = ActionId("use");
 
 	InitializeActionHandler();
 
+	
 	if (gEnv->pInput)
+	{
+		gEnv->pInput->RemoveEventListener(this);
 		gEnv->pInput->AddEventListener(this);
-
+	}
 	pHost = GetEntity()->GetComponent<CPlayer>();
 }
 
@@ -111,7 +115,7 @@ void CInput::InitializeActionHandler()
 	m_actionHandler.AddHandler(ActionId("jump"), &CInput::OnActionJump);
 	m_actionHandler.AddHandler(ActionId("findway"), &CInput::OnActionFindWay);
 	m_actionHandler.AddHandler(ActionId("exit"), &CInput::OnExit);
-	m_actionHandler.AddHandler(ActionId("use2"), &CInput::OnUse);
+	m_actionHandler.AddHandler(ActionId("use"), &CInput::OnUse);
 
 }
 

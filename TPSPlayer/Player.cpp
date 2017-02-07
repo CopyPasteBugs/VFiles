@@ -121,6 +121,7 @@ void CPlayer::OnShutDown()
 	if (pView) GetEntity()->RemoveComponent(pView);
 	if (pMarker) GetEntity()->RemoveComponent(pMarker);
 	if (pAttack) GetEntity()->RemoveComponent(pAttack);
+
 	pMarker = nullptr;
 	pView = nullptr;
 	pAttack = nullptr;
@@ -135,12 +136,9 @@ void CPlayer::OnResetState()
 	GetEntity()->SetFlags(ENTITY_FLAG_CASTSHADOW | ENTITY_FLAG_CLIENT_ONLY | ENTITY_FLAG_TRIGGER_AREAS);
 
 	pInput = GetEntity()->GetOrCreateComponent<CInput>();
-	if (pInput) pInput->OnResetState();
-
 	pView = GetEntity()->GetOrCreateComponent<CView>();
 	pMarker = GetEntity()->GetOrCreateComponent<CMarker>();
 	pAttack = GetEntity()->GetOrCreateComponent<CAttack>();
-
 
 }
 

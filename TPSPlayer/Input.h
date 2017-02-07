@@ -47,8 +47,8 @@ public:
 
 	void Update(SEntityUpdateContext* param);
 
-	const Vec2 GetDeltaRotation() const { return mouseDeltaRotation; };
-	const float GetDeltaWheel() const { return mouseDeltaWheel; };
+	Vec2 GetDeltaRotation() const { return mouseDeltaRotation; };
+	float GetDeltaWheel() const { return mouseDeltaWheel; };
 	const TInputFlags GetMovementFlags() const { return m_inputFlags; };
 	const Vec3 GetLocalMoveDirection() const;
 	const bool GetJumpState() const { return requestJump; };

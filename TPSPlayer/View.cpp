@@ -173,7 +173,8 @@ void CView::OnViewRotate(float dt)
 
 	camParams.yaw += mouseDeltaRotation.x * fRotationSpeedYaw * dt;
 	camParams.pitch += mouseDeltaRotation.y * fRotationSpeedPitch * dt;
-	camParams.pitch = CLAMP(camParams.pitch, fRotationLimitsMinPitch, fRotationLimitsMaxPitch);
+	//camParams.pitch = CLAMP(camParams.pitch, fRotationLimitsMinPitch, fRotationLimitsMaxPitch);
+	camParams.pitch = CLAMP(camParams.pitch, DEG2RAD(-90), DEG2RAD(90));
 
 	// Get adjust for follow distance
 	camParams.wheel = (int)pHost->GetInput()->GetDeltaWheel();

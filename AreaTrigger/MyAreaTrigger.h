@@ -20,7 +20,7 @@ public:
 	{
 		eInputPorts_Enable = 0,
 		eInputPorts_Disable,
-		eInputPorts_Manual
+		eInputPorts_WatchThisEntityId
 	};
 
 	enum EFlowgraphOutputPorts
@@ -70,4 +70,5 @@ protected:
 protected:
 	bool m_bActive;
 	float m_fSize;
+	EntityId nEntityId;
 };

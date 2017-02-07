@@ -84,7 +84,7 @@ protected:
 	IView* pView;
 	unsigned int viewId;
 	SViewParams viewParams;
-	float fFov;
+	float fFov = 60.0f;
 	Vec3 position;
 	Quat rotation;
 	IEntity* pViewHostEntity;
@@ -99,8 +99,9 @@ protected:
 	// Settings
 	float fRotationSpeedYaw = 0.05f;
 	float fRotationSpeedPitch = 0.05f;
-	float fRotationLimitsMinPitch = -0.84f;
-	float fRotationLimitsMaxPitch = 1.3f;
+
+	float fRotationLimitsMinPitch = -90.0f;
+	float fRotationLimitsMaxPitch = 90.0f;
 
 	float fShakeOffsetX = 3.0f;
 	float fShakeOffsetY = 1.0f;
