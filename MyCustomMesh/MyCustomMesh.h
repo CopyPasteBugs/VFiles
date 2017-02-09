@@ -40,7 +40,7 @@ public:
 		else
 			return GetEntity()->GetPos();
 	};
-	virtual const AABB GetBBox() const override { return AABB(Vec3(-10, -10, -10), Vec3(10, 10, 10)); };
+	virtual const AABB GetBBox() const override { return AABB(Vec3(-100, -100, -100), Vec3(100, 100, 100)); };
 	virtual void       FillBBox(AABB& aabb) { aabb = GetBBox(); }
 	virtual void       SetBBox(const AABB& WSBBox) override { };
 
@@ -80,8 +80,11 @@ protected:
 
 	Vec3 pos[3];
 	Vec2 uv[3];
+	Vec3 tng[3];
 	vtx_idx ind[3];
 	SMeshSubset subset;
+	SMeshFace face;
+
 
 
 };

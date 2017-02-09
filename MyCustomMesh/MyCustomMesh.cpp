@@ -99,6 +99,13 @@ void CCustomMesh::OnResetState()
 			mesh->SetSharedStream(CMesh::POSITIONS, &pos[0], count);
 
 
+			tng[0] = Vec3(0, 1, 0);
+			tng[1] = Vec3(0, 1, 0);
+			tng[2] = Vec3(0, 1, 0);
+
+			mesh->SetSharedStream(CMesh::TANGENTS, &tng[0], count);
+
+
 			//uv = mesh->GetStreamPtr<Vec2>(CMesh::TEXCOORDS, &gotElements);
 
 			uv[0] = Vec2(0, 0);
@@ -110,23 +117,32 @@ void CCustomMesh::OnResetState()
 
 			//ind = mesh->GetStreamPtr<vtx_idx>(CMesh::INDICES, &gotElements);
 
-			ind[0] = 1;
-			ind[1] = 2;
-			ind[2] = 3;
+			ind[0] = 0;
+			ind[1] = 1;
+			ind[2] = 2;
 
 			mesh->SetSharedStream(CMesh::INDICES, &ind[0], count);
 
 			subset.nNumIndices = count;
 			subset.nNumVerts = count;
-			subset.nMatID = 0;
-			subset.FixRanges(&ind[0]);
+			//subset.nMatID = 0;
+			//subset.FixRanges(&ind[0]);
 			subset.nFirstVertId = 0;
 			subset.nFirstIndexId = 0;
 			
 			mesh->m_subsets.clear();
 			mesh->m_subsets.push_back(subset);
 
-			mesh->RecomputeGeometricMeanFaceArea();
+			face.v[0] = 0;
+			face.v[1] = 1;
+			face.v[2] = 2;
+			face.nSubset = 1;
+
+			mesh->SetSharedStream(CMesh::FACES, &face, 1);
+
+			mesh->m_bbox = GetBBox();
+
+			//mesh->RecomputeGeometricMeanFaceArea();
 
 			bool ret = mesh->Validate(nullptr);
 
