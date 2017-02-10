@@ -35,7 +35,7 @@ void CCustomMesh::Initialize()
 	//OnResetState();
 	GetEntity()->Activate(true);
 	material = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial("default.mtl");
-	gEnv->p3DEngine->RegisterEntity(this);
+	//gEnv->p3DEngine->RegisterEntity(this);
 	
 }
 
@@ -46,7 +46,6 @@ void CCustomMesh::ProcessEvent(SEntityEvent & event)
 	case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
 	case ENTITY_EVENT_UPDATE:
 	{
-		matrix = GetEntity()->GetWorldTM();
 		break;
 	}
 	case ENTITY_EVENT_START_LEVEL:
@@ -57,27 +56,13 @@ void CCustomMesh::ProcessEvent(SEntityEvent & event)
 
 void CCustomMesh::OnShutDown()
 {
-		//m_pSubstitute->Dephysicalize();
-		gEnv->p3DEngine->UnRegisterEntityAsJob(this);
-}
 
-void CCustomMesh::Render(const SRendParams & EntDrawParams, const SRenderingPassInfo & passInfo)
-{
-	// create a temp render params copy to manipulate
-	SRendParams tempParams(EntDrawParams);
-	tempParams.pMaterial = material;
-	tempParams.dwFObjFlags |= FOB_DYNAMIC_OBJECT; // only needed if object moved
-	tempParams.pMatrix = &matrix;
-
-	pStaticObject->Render(tempParams, passInfo);
 }
 
 void CCustomMesh::OnResetState()
 {
 	if (!inited)
-	{		
-		
-		
+	{				
 		if (!pStaticObject)
 		{
 			pStaticObject = gEnv->p3DEngine->CreateStatObj();
@@ -105,7 +90,6 @@ void CCustomMesh::OnResetState()
 
 			mesh->SetSharedStream(CMesh::TANGENTS, &tng[0], count);
 
-
 			//uv = mesh->GetStreamPtr<Vec2>(CMesh::TEXCOORDS, &gotElements);
 
 			uv[0] = Vec2(0, 0);
@@ -113,7 +97,6 @@ void CCustomMesh::OnResetState()
 			uv[2] = Vec2(1, 1);
 
 			mesh->SetSharedStream(CMesh::TEXCOORDS, &uv[0], count);
-
 
 			//ind = mesh->GetStreamPtr<vtx_idx>(CMesh::INDICES, &gotElements);
 
@@ -140,21 +123,18 @@ void CCustomMesh::OnResetState()
 
 			mesh->SetSharedStream(CMesh::FACES, &face, 1);
 
-			mesh->m_bbox = GetBBox();
-
-			//mesh->RecomputeGeometricMeanFaceArea();
+			mesh->m_bbox = AABB(Vec3(-100,-100,-100), Vec3(100,100,100));
 
 			bool ret = mesh->Validate(nullptr);
-
 
 			// make the static object update
 			pStaticObject->SetFlags(STATIC_OBJECT_GENERATED | STATIC_OBJECT_DYNAMIC);
 			pStaticObject->Invalidate();
 			pStaticObject->SetMaterial(material);
 
+			GetEntity()->SetStatObj(pStaticObject, 0, false);
 		}
 		
-		matrix = GetEntity()->GetWorldTM();
 		inited = true;
 	}
 }
