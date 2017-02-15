@@ -43,13 +43,6 @@ struct IGameEventsListener
 
 class CGameEventsSystem
 {
-private:
-	CGameEventsSystem() {};
-	~CGameEventsSystem() {};
-
-	static CGameEventsSystem *m_instanceSingleton;
-
-public:
 	typedef std::vector<IGameEventsListener*> gameListeners;
 	typedef std::vector<IGameEventsListener*>::iterator gameListenersIterator;
 	typedef std::vector<SGameEvent> gameEventsPool;
@@ -63,63 +56,17 @@ public:
 			m_instanceSingleton;
 	}
 
-	bool AddEventListener(IGameEventsListener* pListener)
-	{
-		bool ret = false;
-
-		for (const GameEvents e : GameEventsAll)
-		{
-			if (pListener->GetGameEventsMask() & (int)e)
-			{
-				pListenersMap[e].push_back(pListener);
-				ret = true;
-			}
-		}
-
-		return ret;
-	}
-
-	bool RemoveEventListener(IGameEventsListener* pListener)
-	{
-		bool ret = false;
-
-		for (const GameEvents e : GameEventsAll)
-		{
-			gameListenersIterator it = std::find(pListenersMap[e].begin(), pListenersMap[e].end(), pListener);
-			
-			if (it != pListenersMap[e].end())
-				pListenersMap[e].erase(it);
-		}
-
-		return ret;
-	}
-
+	bool AddEventListener(IGameEventsListener* pListener);
+	bool RemoveEventListener(IGameEventsListener* pListener);
 	void PushGameEvent(const SGameEvent& event);
+	void OnUpdateDispatch();
 
-	void OnUpdateDispatch() 
-	{
-		// Go through all types of event
-		for (const GameEvents e : GameEventsAll)
-		{
-			// Get listener from list
-			for (gameListenersIterator listener = pListenersMap[e].begin(); listener != pListenersMap[e].end(); listener++)
-			{
-				// if this listener have mask with this type of event, then send all collected event(s) of this type for this listener
-				if ((*listener)->GetGameEventsMask() & e)
-				{
-					for (gameEventsPoolIterator event = pGotEventsMap[e].begin(); event != pGotEventsMap[e].end(); event++)
-					{
-						(*listener)->OnGameEvent((*event));
-					}
-				}
-			}
+private:
+	CGameEventsSystem() {};
+	~CGameEventsSystem() {};
 
-			// So, now we send all event (of this type), and for now we may clear the pool
-			pGotEventsMap[e].clear();
-		}
-	};
-
-protected:
 	std::map<GameEvents, gameListeners> pListenersMap;
 	std::map<GameEvents, gameEventsPool> pGotEventsMap;
+
+	static CGameEventsSystem *m_instanceSingleton;
 };
