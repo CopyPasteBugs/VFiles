@@ -6,28 +6,52 @@
 
 class CGameEventsSystem;
 
-typedef enum GameEvents
+enum EGameEvents : const unsigned __int64
 {
-	OnNothing	= BIT(0),
-	OnShot		= BIT(1),
-	OnDeath		= BIT(2),
-	OnSpawn		= BIT(3),
-} GameEvents;
+	GE_NOTHING					= BIT64(0),
+	GE_SHOT						= BIT64(1),
+	GE_DEATH					= BIT64(2),
+	GE_SPAWN					= BIT64(3),
+	GE_TURNOFF_ALL_ELEVATORS	= BIT64(4),
+	GE_UNNAMED_EVENT_1			= BIT64(5),
+	GE_UNNAMED_EVENT_2			= BIT64(6),
+	GE_UNNAMED_EVENT_3			= BIT64(7),
+	GE_UNNAMED_EVENT_4			= BIT64(8),
+	GE_UNNAMED_EVENT_5			= BIT64(9),
+	GE_UNNAMED_EVENT_6			= BIT64(10),
+	GE_UNNAMED_EVENT_7			= BIT64(11),
 
-static GameEvents GameEventsAll[] = {	OnShot, 
-										OnDeath, 
-										OnSpawn};
+	// Add more if needed, allowed 63 events total count
+
+	GE_LAST = BIT64(63)
+};
+
+// List of allowed events for processing by GameEventSystem 
+static EGameEvents AllowedToProcessEvents[] = 
+{ 
+	GE_SHOT,
+	GE_DEATH,
+	GE_SPAWN,
+	GE_TURNOFF_ALL_ELEVATORS,
+	GE_UNNAMED_EVENT_1,
+	GE_UNNAMED_EVENT_2,
+	GE_UNNAMED_EVENT_3,
+	GE_UNNAMED_EVENT_4,
+	GE_UNNAMED_EVENT_5,
+	GE_UNNAMED_EVENT_6,
+	GE_UNNAMED_EVENT_7
+};
 
 CGameEventsSystem* GetGameEventSystem();
 
 
 typedef struct SGameEvent
 {
-	GameEvents type;
+	EGameEvents type;
 	int value;
 
-	SGameEvent() { type = OnNothing; };
-	SGameEvent(GameEvents type_, int value_ = 0) { type = type_; value = value_; };
+	SGameEvent() { type = GE_NOTHING; };
+	SGameEvent(EGameEvents type_, int value_ = 0) { type = type_; value = value_; };
 
 } SGameEvent;
 
@@ -35,9 +59,9 @@ struct IGameEventsListener
 {
 	virtual ~IGameEventsListener() {};
 	// ! events to entity
-	virtual void OnGameEvent(const SGameEvent& event) = 0;
+	virtual void ProcessGameEvent(const SGameEvent& event) {};
 	// ! Set mask for subscribe to game events return (OnShot | OnDeath | OnSpawn )
-	virtual int GetGameEventsMask() const { return 0; }
+	virtual const int64 GetGameEventsMask() const { return 0; }
 	void SendGameEvent(SGameEvent& event);
 };
 
@@ -65,8 +89,8 @@ private:
 	CGameEventsSystem() {};
 	~CGameEventsSystem() {};
 
-	std::map<GameEvents, gameListeners> pListenersMap;
-	std::map<GameEvents, gameEventsPool> pGotEventsMap;
+	std::map<EGameEvents, gameListeners> pListenersMap;
+	std::map<EGameEvents, gameEventsPool> pGotEventsMap;
 
 	static CGameEventsSystem *m_instanceSingleton;
 };

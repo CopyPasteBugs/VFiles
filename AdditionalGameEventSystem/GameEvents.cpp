@@ -14,7 +14,7 @@ bool CGameEventsSystem::AddEventListener(IGameEventsListener * pListener)
 {
 	bool ret = false;
 
-	for (const GameEvents e : GameEventsAll)
+	for (const EGameEvents e : AllowedToProcessEvents)
 	{
 		if (pListener->GetGameEventsMask() & (int)e)
 		{
@@ -30,7 +30,7 @@ bool CGameEventsSystem::RemoveEventListener(IGameEventsListener * pListener)
 {
 	bool ret = false;
 
-	for (const GameEvents e : GameEventsAll)
+	for (const EGameEvents e : AllowedToProcessEvents)
 	{
 		gameListenersIterator it = std::find(pListenersMap[e].begin(), pListenersMap[e].end(), pListener);
 
@@ -50,7 +50,7 @@ void CGameEventsSystem::PushGameEvent(const SGameEvent& event)
 void CGameEventsSystem::OnUpdateDispatch()
 {
 	// Go through all types of event
-	for (const GameEvents e : GameEventsAll)
+	for (const EGameEvents e : AllowedToProcessEvents)
 	{
 		// for each listener from list of listenerers
 		for (auto &listener : pListenersMap[e])
@@ -61,7 +61,7 @@ void CGameEventsSystem::OnUpdateDispatch()
 				// send all events of E type to listener
 				for (auto &event : pGotEventsMap[e])
 				{
-					(listener)->OnGameEvent((event));
+					(listener)->ProcessGameEvent((event));
 				}
 			}
 		}
