@@ -35,7 +35,7 @@ void CCustomMesh::Initialize()
 	//OnResetState();
 	GetEntity()->Activate(true);
 	material = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial("default.mtl");
-	//gEnv->p3DEngine->RegisterEntity(this);
+	OnResetState();
 	
 }
 
@@ -56,7 +56,7 @@ void CCustomMesh::ProcessEvent(SEntityEvent & event)
 
 void CCustomMesh::OnShutDown()
 {
-
+	
 }
 
 void CCustomMesh::OnResetState()

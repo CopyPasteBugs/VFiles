@@ -32,9 +32,9 @@ public:
 protected:
 	bool inited = false;
 	//IRenderNode* pNode = nullptr;
-	IStatObj* pStaticObject = nullptr;
+	_smart_ptr<IStatObj> pStaticObject = nullptr;
+	_smart_ptr<IMaterial> material = nullptr;
 	Matrix34 matrix;
-	IMaterial* material;
 	Vec3 pos[3];
 	Vec2 uv[3];
 	Vec3 tng[3];
