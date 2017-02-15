@@ -1,0 +1,24 @@
+class CGameRules : public CGameObjectExtensionHelper<CGameRules, IGameRules, 1>
+{
+public:
+	virtual ~CGameRules();
+
+	// IGameObjectExtension
+
+	virtual void Update(SEntityUpdateContext& ctx, int updateSlot) override;
+
+	// ~IGameObjectExtension
+}
+
+// tunr on updates in PostInit() 
+
+void CGameRules::PostInit(IGameObject * pGameObject)
+{
+	pGameObject->EnableUpdateSlot(this, 0);
+} 
+
+// Game rules call GES->Dispather()
+void CGameRules::Update(SEntityUpdateContext & ctx, int updateSlot)
+{
+	GetGameEventSystem()->OnUpdateDispatch();
+}

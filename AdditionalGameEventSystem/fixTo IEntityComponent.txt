@@ -1,0 +1,72 @@
+// STEP 1 *** Add IGameEventsListener to Entity
+class CPlayer final
+	: public IEntityComponent
+	, public IEntityPropertyGroup
+	, public IGameEventsListener
+
+{
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CPlayer, "Player", 0x4C59A850F4BA449E, 0xBA02F86423196D07);
+public:
+
+
+public:
+	// IEntityComponent
+	...
+	// IEntityComponent
+
+	// IEntityPropertyGroup
+	...
+	// IEntityPropertyGroup
+
+	// IGameEventsListener
+	virtual void OnGameEvent(const SGameEvent &event) override;
+	virtual int GetGameEventsMask() const override { return (GameEvents::OnShot | GameEvents::OnDeath | GameEvents::OnSpawn); };
+	// IGameEventsListener
+	
+}
+
+// STEP 2 *** Add this Entity to GetGameEventSystem as listener
+
+void CPlayer::Initialize()
+{
+...
+	GetGameEventSystem()->AddEventListener(this);
+...
+}
+
+
+// STEP 3 *** USAGE SEND / CATCH EVENTS
+
+// Send GameEvent
+bool CInput::OnActionFindWay(EntityId entityId, const ActionId & actionId, int activationMode, float value)
+{
+	
+	if (activationMode == eIS_Pressed)
+	{
+		SGameEvent e(GameEvents::OnShot, 10);
+		pHost->SendGameEvent(e);
+	}
+	return true;
+}
+
+// Catch GameEvent
+void CPlayer::OnGameEvent(const SGameEvent& event)
+{
+	switch (event.type)
+	{
+	case OnShot:
+	case OnDeath:
+	case OnSpawn:
+		int i = event.value;
+		break;
+	}
+}
+
+// STEP 4 *** On Shotdown remove Entity from listeners
+void CPlayer::OnShutDown()
+{
+	GetGameEventSystem()->RemoveEventListener(this);
+}
+
+
+	
