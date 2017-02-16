@@ -1,7 +1,7 @@
 #pragma once
 #include <CryFlowGraph\IFlowBaseNode.h>
 
-class CPlayerTank;
+class CPlayer;
 
 class CFlowNode_Player final : public CFlowBaseNode<eNCT_Singleton>
 {
@@ -17,6 +17,7 @@ public:
 	enum EOutputPorts
 	{
 		eOutputPorts_PlayerPressE = 0,
+		eOutputPorts_PlayerEntityId,
 		eOutputPorts_Num
 	};
 public:
@@ -29,6 +30,9 @@ public:
 
 	void FindPlayerOnLevel();
 
-	CPlayerTank* player;
+	CPlayer* player;
+
+	float fEventTime;
+	
 
 };

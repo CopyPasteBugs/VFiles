@@ -3,30 +3,6 @@
 
 #include "GamePlugin.h"
 
-
-
-class CMyFlowNodeRegistrator : public IEntityRegistrator
-{
-	virtual void Register() override
-	{
-	
-		
-	}
-	virtual void Unregister() override
-	{
-
-	}
-
-public:
-	CMyFlowNodeRegistrator() {}
-	~CMyFlowNodeRegistrator()
-	{
-
-	}
-};
-
-CMyFlowNodeRegistrator g_myFlowNodeRegistrator;
-
 REGISTER_FLOW_NODE("entity:MyFlowNode", CFlowNode_MyName);
 
 CFlowNode_MyName::CFlowNode_MyName(SActivationInfo* pActInfo)
@@ -76,13 +52,13 @@ void CFlowNode_MyName::ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
 	// *** Call per Game update call.
 	case  eFE_Update: 
 	{
-		//static int g = 0;
-		//
-		//// Send event to FG output port 
-		//TFlowInputData output;
-		//output.Set<int>(g++);
-		//output.SetUserFlag(true);
-		//ActivateOutput(pActInfo, 0, output);
+		static int g = 0;
+		
+		// Send event to FG output port 
+		TFlowInputData output;
+		output.Set<int>(g++);
+		output.SetUserFlag(true);
+		ActivateOutput(pActInfo, eOutputPorts_Alertness, output);
 		break;
 	}
 	// *** If one or more input ports have been activated.

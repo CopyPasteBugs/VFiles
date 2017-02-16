@@ -2,29 +2,8 @@
 #include "PlayerFlowNode\PlayerFlowNode.h"
 
 #include "GamePlugin.h"
-#include "PlayerTank\PlayerTank.h"
-
-class CPlayerFlowNodeRegistrator : public IEntityRegistrator
-{
-	virtual void Register() override
-	{
-
-
-	}
-	virtual void Unregister() override
-	{
-
-	}
-
-public:
-	CPlayerFlowNodeRegistrator() {}
-	~CPlayerFlowNodeRegistrator()
-	{
-
-	}
-};
-
-CPlayerFlowNodeRegistrator g_playerFlowNodeRegistrator;
+#include "TPSPlayer\Player.h"
+#include "TPSPlayer\Input.h"
 
 REGISTER_FLOW_NODE("entity:PlayerFlowNode", CFlowNode_Player);
 
@@ -34,6 +13,8 @@ CFlowNode_Player::CFlowNode_Player(SActivationInfo* pActInfo)
 	// To be removed again from this list call the same function with false as the second parameter.
 	// Frequency: you will get 1 ProcessEvent(eFE_Updated) call per Game update call.
 	pActInfo->pGraph->SetRegularlyUpdated(pActInfo->myID, true);
+	fEventTime = 0;
+	player = nullptr;
 };
 
 //IFlowNodePtr CFlowNode_Player::Clone(SActivationInfo *pActInfo)
@@ -51,13 +32,14 @@ void CFlowNode_Player::GetConfiguration(SFlowNodeConfig& config)
 	// name - Do not use the underscore character '_' in port names
 
 	static const SInputPortConfig in_config[] = {
-		InputPortConfig<bool>("EnvironmentEvent", _HELP("Activate if one of the level's enteractive object got a Player near"),0, ""),
+		InputPortConfig_Void("EnvironmentEvent", _HELP("Activate if one of the level's enteractive object got a Player near"),0, ""),
 		InputPortConfig<EntityId>("EnvironmentEntityId", _HELP("Send to Player the object's Id, for iternal usage"),0, ""),
 		InputPortConfig<string>("EnvironmentObjectUsability", _HELP("What this object doing, explanation for player"),0, ""),
 		{ 0 }
 	};
 	static const SOutputPortConfig out_config[] = {
-		OutputPortConfig<int>("PlayerPressE", _HELP("Activated only if Player wants to interact with object")),
+		OutputPortConfig<bool>("PlayerPressE", _HELP("Activated only if Player wants to interact with object"),""),
+		OutputPortConfig<EntityId>("PlayerEntityId", _HELP("Store actual player's EntityId"),""),
 		{ 0 }
 	};
 
@@ -65,42 +47,49 @@ void CFlowNode_Player::GetConfiguration(SFlowNodeConfig& config)
 	config.pInputPorts = in_config;
 	config.pOutputPorts = out_config;
 	config.SetCategory(EFLN_APPROVED);
-
 }
 
 void CFlowNode_Player::ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
 {
 	switch (event)
 	{
-	// *** Sent once after level has been loaded.
-	case eFE_Initialize:
-	{
-		// This is singletone FlowNode so we try to find our sigle Player(on whole level) to work with it.
-		FindPlayerOnLevel();
-		break;
-	}
 	// *** Call per Game update call.
 	case  eFE_Update:
 	{
+
+		if (player)
+		{
+			if (fEventTime < gEnv->pTimer->GetFrameStartTime().GetSeconds())
+			{
+				// Send void
+				TFlowInputData out;
+				out.Set<EntityId>(player->GetEntityId());
+				out.SetUserFlag(true);
+
+				ActivateOutput(pActInfo, eOutputPorts_PlayerEntityId, out);
+				
+				
+				if (player->GetInput()->GetUseState())
+				{
+					ActivateOutput(pActInfo, eOutputPorts_PlayerPressE, TFlowInputData(true));
+				}
+
+				fEventTime = 1.0f + gEnv->pTimer->GetFrameStartTime().GetSeconds();
+			}
+		}
 		break;
 	}
+
 	// *** If one or more input ports have been activated.
 	case eFE_Activate:
 	{
 		if (IsPortActive(pActInfo, eInputPort_EnvironmentEvent))
 		{
-			TFlowInputData* inputValue = pActInfo->GetInputPort(eInputPort_EnvironmentEvent);
-			bool* value = inputValue->GetPtr<bool>();
-
-			// TODO : 
-			if (value)
+			if (player->GetInput()->GetUseState())
 			{
-				if (player->GetUseFlag())
-				{
-					//player->SetUseFlag(false);
-					ActivateOutput(pActInfo, eOutputPorts_PlayerPressE, TFlowInputData(true));
-				}
-			}
+				ActivateOutput(pActInfo, eOutputPorts_PlayerPressE, TFlowInputData(true));
+				//ActivateOutput(pActInfo, eOutputPorts_PlayerEntityId, TFlowInputData(player->GetEntityId()));
+			}			
 		}
 
 		if (IsPortActive(pActInfo, eInputPort_EnvironmentEntityId))
@@ -108,11 +97,8 @@ void CFlowNode_Player::ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
 			TFlowInputData* inputValue = pActInfo->GetInputPort(eInputPort_EnvironmentEntityId);
 			EntityId* value = inputValue->GetPtr<EntityId>();
 
-			// TODO : 
-			if (value)
-			{
+			
 
-			}
 		}
 
 		if (IsPortActive(pActInfo, eInputPort_EnvironmentObjectUsability))
@@ -130,6 +116,21 @@ void CFlowNode_Player::ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
 
 		break;
 	}
+	// *** Sent once after level has been loaded.
+	case eFE_Initialize:
+	{
+		// This is singletone FlowNode so we try to find our sigle Player(on whole level) to work with it.
+		FindPlayerOnLevel();
+
+		// Also push to player's fgNode some initial values
+		//ActivateOutput(pActInfo, eOutputPorts_PlayerPressE, TFlowInputData(false));
+		//if (player)
+		//	ActivateOutput(pActInfo, eOutputPorts_PlayerEntityId, TFlowInputData(player->GetEntityId()));
+
+		pActInfo->pGraph->SetRegularlyUpdated(pActInfo->myID, true);
+
+		break;
+	}
 	default:
 		break;
 	};
@@ -140,7 +141,7 @@ void CFlowNode_Player::FindPlayerOnLevel()
 	auto *pEntityIterator = gEnv->pEntitySystem->GetEntityIterator();
 	pEntityIterator->MoveFirst();
 
-	auto *pSpawnerClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("PlayerTank");
+	auto *pSpawnerClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("Player");
 
 	while (!pEntityIterator->IsEnd())
 	{
@@ -149,7 +150,7 @@ void CFlowNode_Player::FindPlayerOnLevel()
 		if (pEntity->GetClass() != pSpawnerClass)
 			continue;
 
-		player = pEntity->GetComponent<CPlayerTank>();
+		player = pEntity->GetComponent<CPlayer>();
 
 		break;
 	}
