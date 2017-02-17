@@ -13,12 +13,13 @@
 
 #include "PlayerTank\PlayerTank.h"
 
-class CAreaTriggerRegistrator : public IEntityRegistrator
+class CAreaTriggerRegistrator : public IEntityRegistrator, public CMyAreaTriggerEntity::SExternalCVars
 {
 	virtual void Register() override
 	{
 		RegisterEntityWithDefaultComponent<CMyAreaTriggerEntity>("MyAreaTriggerEntity", "Default", "Trigger.bmp");
 		
+
 		CEntityFlowNodeFactory* pFlowNodeFactory = new CEntityFlowNodeFactory("entity:MyAreaTriggerEntity");
 
 		pFlowNodeFactory->m_inputs.push_back(InputPortConfig<bool>("Active", ""));
@@ -36,10 +37,26 @@ class CAreaTriggerRegistrator : public IEntityRegistrator
 		pFlowNodeFactory->m_outputs.push_back(OutputPortConfig<EntityId>("GuestEntityId"));
 		pFlowNodeFactory->m_outputs.push_back(OutputPortConfig<EntityId>("AreaEntityId"));
 		pFlowNodeFactory->Close();
+
+		RegisterCVars();
 	}
 	virtual void Unregister() override
 	{
+		UnregisterCVars();
+	}
 
+	void RegisterCVars()
+	{
+		REGISTER_CVAR2("debug_AreaDrawVolume", &drawVolume, 1, VF_CHEAT, "render debug volume of areatrigger if == 1");
+	}
+
+	void UnregisterCVars()
+	{
+		IConsole* pConsole = gEnv->pConsole;
+		if (pConsole)
+		{
+			pConsole->UnregisterVariable("debug_AreaDrawVolume");
+		}
 	}
 
 public:
@@ -67,6 +84,7 @@ void CMyAreaTriggerEntity::Initialize()
 	GetEntity()->Activate(true);
 	GetEntity()->SetFlags(ENTITY_FLAG_CLIENT_ONLY);
 	OnResetState();
+	//GetGameEventSystem()->AddEventListener(this);
 }
 
 void CMyAreaTriggerEntity::OnShutDown()
@@ -185,17 +203,52 @@ void CMyAreaTriggerEntity::ProcessEvent(SEntityEvent& event)
 
 void CMyAreaTriggerEntity::Update(SEntityUpdateContext & ctx)
 {
+	//// method 1
 	//static IPersistantDebug* debug = gEnv->pGameFramework->GetIPersistantDebug();
-	//debug->Begin("MyAreaTrigger", true);
-	//AABB bb;
-	//GetEntity()->GetWorldBounds(bb);
-	//debug->AddAABB(bb.min, bb.max, ColorF(1, 1, 1), 0);
+	//debug->Begin("CustomDebug", true);
+	//Vec3 lineBegin(0, 0, 0);
+	//Vec3 lineEnd(0, 1, 0);
+	//debug->AddLine(lineBegin, lineEnd, ColorF(1, 1, 0, 1), 1.0f);
+	//debug->AddSphere(lineBegin, 0.1f, ColorF(1, 0, 0, 1), 1.0f);
+	//debug->AddSphere(lineEnd, 0.1f, ColorF(1, 0, 0, 1), 1.0f);
 
-	AABB aabb;
-	GetEntity()->GetLocalBounds(aabb);
-	OBB obb(OBB::CreateOBBfromAABB(Matrix33(GetEntity()->GetWorldTM()), aabb));
-	//Overlap::Lineseg_OBB(lineseg, GetEntity()->GetWorldPos(), obb)
-	gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(obb, GetEntity()->GetWorldTM(), false, ColorB(255, 255, 0), EBoundingBoxDrawStyle::eBBD_Faceted);
+
+	//// method 2
+	//ColorF color(1, 1, 1, 1);
+	//if (IRenderAuxGeom* debugRender = gEnv->pRenderer->GetIRenderAuxGeom())
+	//{
+	//	debugRender->DrawLine(lineBegin, color, lineEnd, color, 1.0f);
+	//	//debugRender->DrawLines(...);
+	//	const Vec3 size(0.1f, 0.1f, 0.1f);
+	//	AABB bb(-size, size); // local volume
+	//	AABB::CreateTransformedAABB(Matrix34::CreateTranslationMat(lineBegin), bb); // translate volume
+	//	debugRender->DrawAABB(bb, true, ColorB(255, 255, 255), EBoundingBoxDrawStyle::eBBD_Faceted);
+	//}
+
+	if (GetCVars().drawVolume)
+	{
+		AABB aabb;
+		GetEntity()->GetLocalBounds(aabb);
+		OBB obb(OBB::CreateOBBfromAABB(Matrix33(GetEntity()->GetWorldTM()), aabb));
+		//Overlap::Lineseg_OBB(lineseg, GetEntity()->GetWorldPos(), obb)
+		gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(obb, GetEntity()->GetWorldTM(), false, ColorB(255, 255, 0), EBoundingBoxDrawStyle::eBBD_Faceted);
+	}
+}
+
+void CMyAreaTriggerEntity::ProcessGameEvent(const SGameEvent & event)
+{
+	switch (event.type)
+	{
+	case GE_TURNOFF_ALL_ELEVATORS:
+		// turn off code...
+		int i = event.value; //brakepoint for
+		break;
+	}
+}
+
+const CMyAreaTriggerEntity:: SExternalCVars & CMyAreaTriggerEntity::GetCVars() const
+{
+	return g_areaRegistrator;
 }
 
 void CMyAreaTriggerEntity::ActivateFlowNodeOutput(const int portIndex, const TFlowInputData & inputData)
@@ -241,6 +294,8 @@ void CMyAreaTriggerEntity::OnFlowgraphActivation(EntityId entityId, IFlowNode::S
 
 void CMyAreaTriggerEntity::OnResetState()
 {
+	GetGameEventSystem()->RemoveEventListener(this);
+	GetGameEventSystem()->AddEventListener(this);
 	
 	//IEntityTriggerComponent *pTriggerProxy = (IEntityTriggerComponent*)(GetEntity()->GetProxy(ENTITY_PROXY_TRIGGER));
 	IEntityTriggerComponent *pTriggerProxy = GetEntity()->GetOrCreateComponent<IEntityTriggerComponent>();

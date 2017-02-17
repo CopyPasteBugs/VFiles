@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GamePlugin.h"
 #include "Entities/Helpers/ISimpleExtension.h"
 
 #include <CryEntitySystem/IEntity.h>
@@ -10,6 +11,7 @@ class CGameEntityNodeFactory;
 class CMyAreaTriggerEntity final
 	: public IEntityComponent
 	, public IEntityPropertyGroup
+	, public IGameEventsListener
 {
 	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CMyAreaTriggerEntity, "MyAreaTriggerEntity", 0xDE425219F8674496, 0x8040F25C6FF6C9C3);
 
@@ -31,6 +33,11 @@ public:
 		eOutputPorts_Leave,
 		eOutputPorts_GuestEntityId,
 		eOutputPorts_AreaEntityId,
+	};
+
+	struct SExternalCVars
+	{
+		int drawVolume;
 	};
 
 public:
@@ -62,6 +69,13 @@ public:
 
 	static void OnFlowgraphActivation(EntityId entityId, IFlowNode::SActivationInfo* pActInfo, const class CEntityFlowNode* pNode);
 	void CMyAreaTriggerEntity::Update(SEntityUpdateContext & ctx);
+
+	//IGameEventsListener
+	virtual void ProcessGameEvent(const SGameEvent& event) override;
+	virtual const int64 GetGameEventsMask() const override { return GE_TURNOFF_ALL_ELEVATORS; }
+	//IGameEventsListener
+
+	const SExternalCVars &GetCVars() const;
 
 	IEntity* guest;
 protected:
