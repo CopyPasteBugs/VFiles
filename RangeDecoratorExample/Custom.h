@@ -7,11 +7,11 @@
 #include <CryEntitySystem/IEntity.h>
 #include <CryEntitySystem/IEntitySystem.h>
 
-enum MyEnum 
+enum MyGeomModels 
 {	
-	me_Something = BIT(1),
-	me_Anything = BIT(2),
-	me_Somewhere = BIT(3)
+	mgm_primitive_box = BIT(1),
+	mgm_primitive_cylinder = BIT(2),
+	mgm_primitive_sphere = BIT(3)
 };
 
 class CCustom
@@ -40,5 +40,5 @@ protected:
 	void Physicalize();
 	int nMass;
 	int nBitMask;
-	MyEnum mySelectedEnum;
+	MyGeomModels mySelectedGeom;
 };

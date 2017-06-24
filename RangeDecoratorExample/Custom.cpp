@@ -47,9 +47,28 @@ void CCustom::ProcessEvent(SEntityEvent & event)
 
 void CCustom::OnResetState()
 {
-	GetEntity()->LoadGeometry(0, "Assets\\objects\\sphere.cgf");
+
+	GetEntity()->FreeSlot(0);
+
+	switch (mySelectedGeom)
+	{
+	case mgm_primitive_box:
+		GetEntity()->LoadGeometry(0, "Assets\\objects\\primitive_box.cgf");
+		break;
+	
+	case mgm_primitive_cylinder:
+		GetEntity()->LoadGeometry(0, "Assets\\objects\\primitive_cylinder.cgf");
+		break;
+
+	case mgm_primitive_sphere:
+		GetEntity()->LoadGeometry(0, "Assets\\objects\\primitive_sphere.cgf");
+		break;
+
+	default:
+		break;
+	}
+	
 	Physicalize();
-	nBitMask = 3;
 }
 
 void CCustom::Physicalize()
@@ -66,8 +85,7 @@ void CCustom::SerializeProperties(Serialization::IArchive & archive)
 {
 	archive(Serialization::Range(nMass, 0, 100, 5), "MyMass", "My mass");
 	
-	archive(mySelectedEnum, "MyEnum", "My enum");
-
+	archive(mySelectedGeom, "MyGeom", "My geometry models");
 	
 	if (archive.isInput()) 
 	{
@@ -75,8 +93,8 @@ void CCustom::SerializeProperties(Serialization::IArchive & archive)
 	}
 }
 
-SERIALIZATION_ENUM_BEGIN(MyEnum, "My enum flags")
-SERIALIZATION_ENUM(me_Something, "something", "Something")
-SERIALIZATION_ENUM(me_Anything, "anything", "Anything")
-SERIALIZATION_ENUM(me_Somewhere, "somewhere", "Somewhere")
+SERIALIZATION_ENUM_BEGIN(MyGeomModels, "My geometry models")
+SERIALIZATION_ENUM(mgm_primitive_box, "primitivebox", "primitive_box")
+SERIALIZATION_ENUM(mgm_primitive_cylinder, "primitivecylinder", "primitive_cylinder")
+SERIALIZATION_ENUM(mgm_primitive_sphere, "primitivesphere", "primitive_sphere")
 SERIALIZATION_ENUM_END()
