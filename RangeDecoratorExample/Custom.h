@@ -7,6 +7,13 @@
 #include <CryEntitySystem/IEntity.h>
 #include <CryEntitySystem/IEntitySystem.h>
 
+enum MyEnum 
+{	
+	me_Something = BIT(1),
+	me_Anything = BIT(2),
+	me_Somewhere = BIT(3)
+};
+
 class CCustom
 	: public IEntityComponent
 	, public IEntityPropertyGroup
@@ -32,4 +39,6 @@ public:
 protected:
 	void Physicalize();
 	int nMass;
+	int nBitMask;
+	MyEnum mySelectedEnum;
 };

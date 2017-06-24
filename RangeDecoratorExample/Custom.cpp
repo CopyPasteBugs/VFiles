@@ -3,6 +3,8 @@
 #include "Custom.h"
 
 #include <CrySerialization/Decorators/Range.h>
+#include <CrySerialization/Decorators/BitFlags.h>
+
 
 class CHitFXEntityRegistrator
 	: public IEntityRegistrator
@@ -47,6 +49,7 @@ void CCustom::OnResetState()
 {
 	GetEntity()->LoadGeometry(0, "Assets\\objects\\sphere.cgf");
 	Physicalize();
+	nBitMask = 3;
 }
 
 void CCustom::Physicalize()
@@ -61,11 +64,19 @@ void CCustom::Physicalize()
 
 void CCustom::SerializeProperties(Serialization::IArchive & archive)
 {
-
 	archive(Serialization::Range(nMass, 0, 100, 5), "MyMass", "My mass");
+	
+	archive(mySelectedEnum, "MyEnum", "My enum");
 
+	
 	if (archive.isInput()) 
 	{
 		OnResetState();
 	}
 }
+
+SERIALIZATION_ENUM_BEGIN(MyEnum, "My enum flags")
+SERIALIZATION_ENUM(me_Something, "something", "Something")
+SERIALIZATION_ENUM(me_Anything, "anything", "Anything")
+SERIALIZATION_ENUM(me_Somewhere, "somewhere", "Somewhere")
+SERIALIZATION_ENUM_END()
