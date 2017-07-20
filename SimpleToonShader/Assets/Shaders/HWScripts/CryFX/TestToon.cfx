@@ -52,7 +52,7 @@ TestVS( app2vertGeneral IN,
   return OUT;
 }
 
-// за основу взят этот пример: https://www.gamedev.net/forums/topic/566320-hlsl-cel-toon-shader-in-xna/
+// Р·Р° РѕСЃРЅРѕРІСѓ РІР·СЏС‚ СЌС‚РѕС‚ РїСЂРёРјРµСЂ: https://www.gamedev.net/forums/topic/566320-hlsl-cel-toon-shader-in-xna/
 
 float4
 TestPS( in vert2FragGeneral IN, 
@@ -80,9 +80,9 @@ TestPS( in vert2FragGeneral IN,
 
   float4 specular4 = specular * float4(1.0, 1.0, 1.0, 1.0) * NdotL;
   
-  // контур
-  if (dot(normalWS,eyeDir) <= 0.2) // width of outline
-    cColor = float4(0,0,0, 1); //красный
+  // РєРѕРЅС‚СѓСЂ
+  if (NdotE <= 0.2) // width of outline
+    cColor = float4(0,0,0, 1); //РєСЂР°СЃРЅС‹Р№
   else
     cColor = saturate(lightColor * cColor + specular4);
  
