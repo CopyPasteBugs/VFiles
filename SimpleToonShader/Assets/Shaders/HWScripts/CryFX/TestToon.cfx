@@ -1,0 +1,102 @@
+// CRYENGINE Source Code File
+// Copyright 2001-2015 Crytek GmbH. All rights reserved.
+ 
+#include "Common.cfi"
+#include "ShadeLib.cfi"
+#include "vertexLib.cfi"
+
+///////////////////////////////
+// Samplers
+
+Texture2D rampTex : register(t9)
+<
+  UIName = "Ramp Map";
+  UIDescription = "Ramp Map";
+> = TM_Custom;
+
+float Script : STANDARDSGLOBAL
+<
+  string Script =        
+                "Public;"
+                "ShaderType = General;"
+                "ShaderDrawType = General;"
+                "AfterHDRPostProcess;"
+                "ForceDrawLast;"
+>;
+ 
+half4 AmbientOpPB        : PB_AmbientOpacity;
+float3x4 ObjWorldMatrix : SI_ObjMatrix        < vsregister = c0; >;
+
+vert2FragGeneral
+TestVS( app2vertGeneral IN, 
+        out float3  normalWS : TEXCOORDN,
+        out float3 eyeDir : TEXCOORD10,
+        out float3 lightDir : TEXCOORD11)
+{
+  vert2FragGeneral OUT = (vert2FragGeneral) 0;
+ 
+  streamPos vertPassPos = (streamPos)0;
+  vs_shared_output(IN, OUT, vertPassPos, false);
+  
+  float3 normal = normalize(cross(vertPassPos.Binormal, vertPassPos.Tangent)); // F...where is normal in vertex %) ..restore from TB???
+  
+  //normalWS = normalize(mul((const float3x3)vertPassPos.InstMatrix, normal));  // I guess this is wrong matrix for using in this case
+  normalWS = normalize(mul((const float3x3)ObjWorldMatrix, normal));            // Yeah!
+  
+  //float3 posWP = mul(vertPassPos.InstMatrix, vertPassPos.Position).xyz;       // still wrong mat 
+  float3 posWP = mul(ObjWorldMatrix, vertPassPos.Position).xyz;                 // obj vertex into world vertex
+  
+  eyeDir = normalize(g_VS_WorldViewPos - posWP);                                // so normalized direction from we look on obj
+  lightDir = normalize(g_VS_SunLightDir);                                       // guess that g_VS_SunLightDir  = normalized(LightPos - Position)
+  
+  return OUT;
+}
+
+// за основу взят этот пример: https://www.gamedev.net/forums/topic/566320-hlsl-cel-toon-shader-in-xna/
+
+float4
+TestPS( in vert2FragGeneral IN, 
+        float3 normalWS : TEXCOORDN,
+        float3 eyeDir : TEXCOORDN10,
+        float3 lightDir : TEXCOORD11 ) : COLOR
+{
+  float4 cColor = GetDiffuseTex( diffuseTex, IN.baseTC );
+   
+  float diffuse = clamp(dot(normalWS, g_PS_SunLightDir), 0.1, 1.0);
+  float4 lightColor = GetCustomTex(rampTex, diffuse);
+  
+  
+  float NdotE = dot(normalWS, eyeDir); 
+  float NdotL = dot(normalWS, g_PS_SunLightDir);
+  
+  float fresnal = NdotE;
+  fresnal = clamp((fresnal - 0.1) * 1000.0, 0.0, 1.0);
+  lightColor *= fresnal;
+  
+  float3 reflect = (2.0 * diffuse * normalWS) - g_PS_SunLightDir;
+  float specular = pow(clamp(dot(reflect, eyeDir), 0.0, 1.0), 8.0);
+  specular = clamp((specular - 0.5) * 1000.0, 0.0, 1.0);
+
+  float4 specular4 = specular * float4(1.0, 1.0, 1.0, 1.0) * NdotL;
+  
+  // контур
+  if (dot(normalWS,eyeDir) <= 0.2) // width of outline
+    cColor = float4(1,0,0, 1); //красный
+  else
+    cColor = saturate(lightColor * cColor + specular4);
+ 
+    
+  //cColor.rgb = pow(cColor.rgb, 1.0 / 2.2 );
+  //cColor.w *= AmbientOpPB.w; 
+ 
+  return cColor;
+}
+ 
+technique General
+{
+  pass p0
+  {    
+    VertexShader = TestVS();
+    PixelShader = TestPS();
+  }
+}

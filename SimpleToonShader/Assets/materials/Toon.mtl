@@ -1,0 +1,14 @@
+<Material MtlFlags="524544" vertModifType="0">
+ <SubMaterials>
+  <Material Name="mat1" MtlFlags="524416" Shader="Test" GenMask="40000" StringGenMask="" SurfaceType="" MatTemplate="" Diffuse="1,1,1" Specular="0,0,0" Opacity="1" Shininess="50" vertModifType="0" LayerAct="0">
+   <Textures>
+    <Texture Map="Diffuse" File="textures/defaults/white2.dds"/>
+    <Texture Map="Custom" File="textures/rampbw.dds"/>
+   </Textures>
+  </Material>
+  <Material Name="proxy" MtlFlags="525440" Shader="Nodraw" GenMask="0" StringGenMask="" SurfaceType="" MatTemplate="" Diffuse="0.80000001,0.80000001,0.80000001" Specular="1,1,1" Opacity="1" Shininess="50" vertModifType="0" LayerAct="1">
+   <Textures />
+  </Material>
+ </SubMaterials>
+ <PublicParams EmittanceMapGamma="1" SSSIndex="0"/>
+</Material>

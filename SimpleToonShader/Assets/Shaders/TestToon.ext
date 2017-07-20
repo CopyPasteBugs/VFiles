@@ -1,0 +1,45 @@
+Version (1.00)
+ 
+UsesCommonGlobalFlags
+ 
+Property
+{
+  Name = %PN_TESSELLATION
+  Mask = 0x40000000
+  Property    (PN triangles tessellation)
+  Description (Use rough approximation of smooth surface subdivision)
+}
+ 
+Property
+{
+  Name = %BLENDLAYER
+  Mask = 0x100
+  Property    (Blendlayer)
+  Description (Normal-mapped diffuse layer blended on top of base material)
+}
+ 
+Property
+{
+  Name = %ALPHAMASK_DETAILMAP
+  Mask = 0x800000
+  Property    (DetailMap mask in Diffuse alpha)
+  Description (Use diffuse map alpha for masking detail maps)
+}
+ 
+Property
+{
+  Name = %SILHOUETTE_PARALLAX_OCCLUSION_MAPPING
+  Mask = 0x10000
+  Property    (Silhouette POM)
+  Description (Parallax occlusion mapping with silhouette (requires height map (_displ)))
+  DependencyReset = $TEX_Normals
+}
+ 
+Property
+{
+  Name = %ALLOW_SILHOUETTE_POM
+  Mask = 0x40000
+  DependencySet = $HW_SilhouettePom
+  DependencyReset = $HW_SilhouettePom
+  Hidden
+}
