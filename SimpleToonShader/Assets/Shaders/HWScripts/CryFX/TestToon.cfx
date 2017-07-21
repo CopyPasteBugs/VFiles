@@ -14,6 +14,56 @@ Texture2D rampTex : register(t9)
   UIDescription = "Ramp Map";
 > = TM_Custom;
 
+half4 MP_SpecColor // !MP means material parameter
+<
+  register = REG_PM_PARAM_3;
+  string UIHelp = "Color of spec on model";                   
+  string UIName = "Spec Color";    
+  string UIWidget = "color";
+> = {1.0, 1.0, 1.0, 1.0};
+
+half4 MP_OutlineColor
+<
+  register = REG_PM_PARAM_4;
+  string UIHelp = "Color of outline on model";                   
+  string UIName = "outline Color";    
+  string UIWidget = "color";
+> = {0.0, 0.0, 0.0, 1.0};
+
+float MP_FresnelScale
+<
+  register = REG_PM_PARAM_2.x;
+  string UIHelp = "Set Fresnel scale";                     
+  string UIName = "Fresnel scale";    	  
+  string UIWidget = "slider";
+  float UIMin = 0.0;
+  float UIMax = 1000.0;
+  float UIStep = 10;
+> = 1000.0;
+
+half MP_FresnelOffset
+<
+  register = REG_PM_PARAM_2.y;
+  string UIHelp = "Set Fresnel offset";                     
+  string UIName = "Fresnel offset";    	  
+  string UIWidget = "slider";
+  float UIMin = 0.0;
+  float UIMax = 1.0;
+  float UIStep = 0.05;
+> = 0.1;
+
+half MP_OutlineWidth
+<
+  register = REG_PM_PARAM_2.z;
+  string UIHelp = "Set width for outline ";                     
+  string UIName = "Outline Width";    	  
+  string UIWidget = "slider";
+  float UIMin = 0.0;
+  float UIMax = 1.0;
+  float UIStep = 0.01;
+> = 0.2;
+
+
 float Script : STANDARDSGLOBAL
 <
   string Script =        
@@ -38,8 +88,7 @@ TestVS( app2vertGeneral IN,
   streamPos vertPassPos = (streamPos)0;
   vs_shared_output(IN, OUT, vertPassPos, false);
   
-  float3 normal = normalize(cross(vertPassPos.Binormal, vertPassPos.Tangent)); // F...where is normal in vertex %) ..restore from TB???
-  
+  float3 normal = normalize(cross(vertPassPos.Binormal, vertPassPos.Tangent)); // F...where is normal in vertex %) ..restore from TB???  
   //normalWS = normalize(mul((const float3x3)vertPassPos.InstMatrix, normal));  // I guess this is wrong matrix for using in this case
   normalWS = normalize(mul((const float3x3)ObjWorldMatrix, normal));            // Yeah!
   
@@ -71,18 +120,18 @@ TestPS( in vert2FragGeneral IN,
   float NdotL = dot(normalWS, g_PS_SunLightDir);
   
   float fresnal = NdotE;
-  fresnal = clamp((fresnal - 0.1) * 1000.0, 0.0, 1.0);
+  fresnal = clamp((fresnal - MP_FresnelOffset) * MP_FresnelScale, 0.0, 1.0);
   lightColor *= fresnal;
   
   float3 reflect = (2.0 * diffuse * normalWS) - g_PS_SunLightDir;
   float specular = pow(clamp(dot(reflect, eyeDir), 0.0, 1.0), 8.0);
   specular = clamp((specular - 0.5) * 1000.0, 0.0, 1.0);
 
-  float4 specular4 = specular * float4(1.0, 1.0, 1.0, 1.0) * NdotL;
+  float4 specular4 = specular * MP_SpecColor * NdotL;
   
   // контур
-  if (NdotE <= 0.2) // width of outline
-    cColor = float4(0,0,0, 1); //красный
+  if (NdotE <= MP_OutlineWidth) // width of outline
+    cColor = MP_OutlineColor; //красный
   else
     cColor = saturate(lightColor * cColor + specular4);
  
