@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="69fdf743-53c8-802c-89f2-a119910af8f8" source="starupscreen.tif">
+ <Files>
+  <File path="starupscreen.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">400</Detail>
+  <Detail name="height">300</Detail>
+  <Detail name="mipCount">1</Detail>
+ </Details>
+</AssetMetadata>

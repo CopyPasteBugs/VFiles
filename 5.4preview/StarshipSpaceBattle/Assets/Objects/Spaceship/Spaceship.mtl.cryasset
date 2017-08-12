@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Material" guid="9a653afb-75eb-c955-7cd5-6157d2db7ca5">
+ <Files>
+  <File path="Spaceship.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">4</Detail>
+  <Detail name="textureCount">3</Detail>
+ </Details>
+ <Dependencies>
+  <Path>textures/defaults/white.dds</Path>
+  <Path>textures/defaults/white.dds</Path>
+  <Path>textures/defaults/white.dds</Path>
+ </Dependencies>
+</AssetMetadata>

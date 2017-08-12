@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="8479c8e5-bec6-2075-b98c-a843c4a88e31" source="untitled.dae">
+ <Files>
+  <File path="bullet.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">3</Detail>
+  <Detail name="triangleCount">12</Detail>
+  <Detail name="vertexCount">24</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./bullet.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

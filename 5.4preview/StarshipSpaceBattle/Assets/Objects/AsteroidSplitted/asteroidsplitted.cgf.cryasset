@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="f3a30211-b3f3-3643-c931-678124f5cfe5" source=".dae">
+ <Files>
+  <File path="asteroidsplitted.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">3</Detail>
+  <Detail name="triangleCount">4126</Detail>
+  <Detail name="vertexCount">3173</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./AsteroidSplitted.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

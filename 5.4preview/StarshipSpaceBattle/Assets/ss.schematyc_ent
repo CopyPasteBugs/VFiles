@@ -1,0 +1,60 @@
+<CrySchematyc CryXmlVersion="2" version="105" guid="8622d74f-c40c-417c-b6c9-d1ddbc7afb46" scope="">
+ <root elementType="Class" guid="6c1b54ee-b0d7-4275-bccd-9c06f4ef65a5" name="ss">
+  <userDocumentation author="home-pc" description=""/>
+  <extensions />
+  <children>
+   <element elementType="Constructor" guid="acffdf1c-7a12-41cb-9e82-3a34efe31f8e" name="ConstructionGraph">
+    <userDocumentation author="home-pc" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="6ceb15dd-83dd-48c1-8dde-988fa94c5e28" typeGUID="12bdfa06-ba95-4e48-bb2d-bb48a7080abc">
+        <value guid="6ceb15dd-83dd-48c1-8dde-988fa94c5e28">
+         <pos x="0" y="0"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="SignalReceiver" guid="f1a65404-571b-4bef-b62f-71ccf106f3d4" name="SignalGraph" type="Universal" signalGUID="">
+    <userDocumentation author="home-pc" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="b32567d7-9922-430d-9fca-9bdc3f8b3543" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="b32567d7-9922-430d-9fca-9bdc3f8b3543" objectGUID="">
+         <pos x="0" y="200"/>
+         <signalId domain="Env" guid="b2561caa-0753-458b-a91f-e8e38b0f0cdf"/>
+        </value>
+       </element>
+       <element key="fc65b764-28fb-4812-bcf9-8a02f71fa653" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="fc65b764-28fb-4812-bcf9-8a02f71fa653" objectGUID="">
+         <pos x="0" y="100"/>
+         <signalId domain="Env" guid="52ad5add-7781-429b-b4a9-0cb6c905e353"/>
+        </value>
+       </element>
+       <element key="80a70b62-04f6-4be9-811b-9454cde63e59" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="80a70b62-04f6-4be9-811b-9454cde63e59" objectGUID="">
+         <pos x="0" y="0"/>
+         <signalId domain="Env" guid="a9279137-7c66-491d-b9a0-8752c24c8979"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="Base" guid="1046251e-83f7-4d73-9d19-e1269b03c255" name="Base [12]">
+    <classId domain="Script" guid="45c32885-9500-44c5-93af-c439fcdf106e"/>
+    <extensions />
+    <children />
+   </element>
+  </children>
+ </root>
+</CrySchematyc>

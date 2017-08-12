@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="922a06ae-496d-4225-7a0f-33e6b4f02981" source="aster_diff.tif">
+ <Files>
+  <File path="aster_diff.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">1024</Detail>
+  <Detail name="height">1024</Detail>
+  <Detail name="mipCount">9</Detail>
+ </Details>
+</AssetMetadata>

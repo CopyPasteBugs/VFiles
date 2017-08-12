@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="43307b0e-ce9a-f61b-2e6c-6de4b7e6ed50">
+ <Files>
+  <File path="entities.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">Entities</Detail>
+ </Details>
+</AssetMetadata>

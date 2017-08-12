@@ -1,0 +1,72 @@
+<ATLConfig atl_name="default_controls" atl_version="2">
+ <AudioTriggers>
+  <ATLTrigger atl_name="get_focus"/>
+  <ATLTrigger atl_name="lose_focus"/>
+  <ATLTrigger atl_name="mute_all"/>
+  <ATLTrigger atl_name="unmute_all"/>
+  <ATLTrigger atl_name="do_nothing"/>
+  <ATLTrigger atl_name="fire1" atl_radius="100">
+   <SDLMixerEvent sdl_name="laser7.ogg" sdl_path="" event_type="start" enable_panning="true" enable_distance_attenuation="false" attenuation_dist_min="0" attenuation_dist_max="100" volume="0" loop_count="1"/>
+  </ATLTrigger>
+ </AudioTriggers>
+ <AudioRTPCs>
+  <ATLRtpc atl_name="absolute_velocity"/>
+  <ATLRtpc atl_name="relative_velocity"/>
+ </AudioRTPCs>
+ <AudioSwitches>
+  <ATLSwitch atl_name="ObstrOcclCalcType">
+   <ATLSwitchState atl_name="ignore">
+    <ATLSwitchRequest atl_name="ObstructionOcclusionCalculationType">
+     <ATLValue atl_name="ignore"/>
+    </ATLSwitchRequest>
+   </ATLSwitchState>
+   <ATLSwitchState atl_name="adaptive">
+    <ATLSwitchRequest atl_name="ObstructionOcclusionCalculationType">
+     <ATLValue atl_name="adaptive"/>
+    </ATLSwitchRequest>
+   </ATLSwitchState>
+   <ATLSwitchState atl_name="low">
+    <ATLSwitchRequest atl_name="ObstructionOcclusionCalculationType">
+     <ATLValue atl_name="low"/>
+    </ATLSwitchRequest>
+   </ATLSwitchState>
+   <ATLSwitchState atl_name="medium">
+    <ATLSwitchRequest atl_name="ObstructionOcclusionCalculationType">
+     <ATLValue atl_name="medium"/>
+    </ATLSwitchRequest>
+   </ATLSwitchState>
+   <ATLSwitchState atl_name="high">
+    <ATLSwitchRequest atl_name="ObstructionOcclusionCalculationType">
+     <ATLValue atl_name="high"/>
+    </ATLSwitchRequest>
+   </ATLSwitchState>
+  </ATLSwitch>
+  <ATLSwitch atl_name="absolute_velocity_tracking">
+   <ATLSwitchState atl_name="on">
+    <ATLSwitchRequest atl_name="absolute_velocity_tracking">
+     <ATLValue atl_name="on"/>
+    </ATLSwitchRequest>
+   </ATLSwitchState>
+   <ATLSwitchState atl_name="off">
+    <ATLSwitchRequest atl_name="absolute_velocity_tracking">
+     <ATLValue atl_name="off"/>
+    </ATLSwitchRequest>
+   </ATLSwitchState>
+  </ATLSwitch>
+  <ATLSwitch atl_name="relative_velocity_tracking">
+   <ATLSwitchState atl_name="on">
+    <ATLSwitchRequest atl_name="relative_velocity_tracking">
+     <ATLValue atl_name="on"/>
+    </ATLSwitchRequest>
+   </ATLSwitchState>
+   <ATLSwitchState atl_name="off">
+    <ATLSwitchRequest atl_name="relative_velocity_tracking">
+     <ATLValue atl_name="off"/>
+    </ATLSwitchRequest>
+   </ATLSwitchState>
+  </ATLSwitch>
+ </AudioSwitches>
+ <EditorData>
+  <Folders />
+ </EditorData>
+</ATLConfig>

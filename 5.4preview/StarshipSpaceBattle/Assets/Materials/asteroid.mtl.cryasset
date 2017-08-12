@@ -1,0 +1,13 @@
+<AssetMetadata version="0" type="Material" guid="9d73f7ab-55bf-a8d3-c490-2aa953ee5740">
+ <Files>
+  <File path="asteroid.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">2</Detail>
+  <Detail name="textureCount">2</Detail>
+ </Details>
+ <Dependencies>
+  <Path>Textures/asteroid/aster_diff.dds</Path>
+  <Path>Textures/asteroid/aster_norm.dds</Path>
+ </Dependencies>
+</AssetMetadata>

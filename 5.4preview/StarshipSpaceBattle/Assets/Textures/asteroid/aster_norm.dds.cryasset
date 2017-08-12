@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="5dec189b-250f-5d47-9c9a-664dfb613ac9" source="aster_norm.tif">
+ <Files>
+  <File path="aster_norm.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">1024</Detail>
+  <Detail name="height">1024</Detail>
+  <Detail name="mipCount">9</Detail>
+ </Details>
+</AssetMetadata>

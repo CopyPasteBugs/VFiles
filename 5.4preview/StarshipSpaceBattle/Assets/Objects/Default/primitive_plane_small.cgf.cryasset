@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="351d3395-dc2d-c0c0-f4c0-10816742b0f2">
+ <Files>
+  <File path="primitive_plane_small.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">1</Detail>
+  <Detail name="triangleCount">2</Detail>
+  <Detail name="vertexCount">4</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>Objects/default/editorprimitive.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

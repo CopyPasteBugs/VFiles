@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="1ffb5714-216e-c9b9-82f6-06d45728c8f7" source=".dae">
+ <Files>
+  <File path="asteroid.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">3</Detail>
+  <Detail name="triangleCount">3072</Detail>
+  <Detail name="vertexCount">1788</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./asteroid.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

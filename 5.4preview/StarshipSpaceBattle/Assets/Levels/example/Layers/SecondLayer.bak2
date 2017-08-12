@@ -1,0 +1,50 @@
+<ObjectLayer>
+ <Layer Name="SecondLayer" FullName="SecondLayer" GUID="efad561a-ffef-347d-9b7e-7862fe902f59" Hidden="0" Frozen="0" Expanded="0" Exportable="1" ExportLayerPak="1" DefaultLoaded="0" HavePhysics="1" IsDefaultColor="0" Color="40697">
+  <LayerObjects>
+   <Object Type="EntityWithComponent" Layer="SecondLayer" LayerGUID="efad561a-ffef-347d-9b7e-7862fe902f59" Id="5efce3af-55dd-2308-77f3-886aaaf18d30" Name="Entity-10" Pos="125.24548,101.52705,70.069923" FloorNumber="-1" Rotate="0.98480773,-0.17364818,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="07d0cad1-8e79-4177-9add-a2464a009fa5" TypeName="Cry::DefaultComponents::CProjectorLightComponent" GUID="4d96a624-e204-2777-605b-e3989006c2e8" Name="" UserAdded="true">
+      <Transform x="1" y="1" z="1">
+       <translation>
+        <element element="0"/>
+        <element element="0"/>
+        <element element="0"/>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale />
+      </Transform>
+      <properties Active="true" Radius="100" Angle="0.78539819">
+       <ProjectorOptions NearPlane="0" Texture="" Material=""/>
+       <Color DiffMult="3" SpecMult="1">
+        <Color r="1" g="1" b="1" a="1"/>
+       </Color>
+       <Shadows ShadowSpec="None"/>
+       <Options AttenuationBulbSize="55.901127" IgnoreVisAreas="false" AffectVolumetricFog="true" VolumetricFogOnly="false" OnlyAffectThisArea="true" Ambient="false" FogRadialLobe="0" GIMode="None"/>
+       <Animations Style="0" Speed="1"/>
+      </properties>
+     </Component>
+    </Components>
+   </Object>
+   <Object Type="EntityWithComponent" Layer="SecondLayer" LayerGUID="efad561a-ffef-347d-9b7e-7862fe902f59" Id="05ddef02-97e2-39d5-abfc-dadb1e1bc041" Name="Entity-6" Pos="123.90173,172.89668,57.259338" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="7925bc64-521f-4a2a-9068-c9c9a1d3499e" TypeName="Cry::DefaultComponents::CParticleComponent" GUID="3083d772-6b62-f024-6f61-162535093bce" Name="" UserAdded="true">
+      <Transform x="1" y="1" z="1">
+       <translation>
+        <element element="0"/>
+        <element element="0"/>
+        <element element="0"/>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale />
+      </Transform>
+      <properties Enabled="true" FilePath="particle1.pfx">
+       <SpawnParams spec="Default" scale="1" countScale="1" speedScale="1" timeScale="1" prime="false"/>
+      </properties>
+     </Component>
+    </Components>
+   </Object>
+  </LayerObjects>
+ </Layer>
+</ObjectLayer>

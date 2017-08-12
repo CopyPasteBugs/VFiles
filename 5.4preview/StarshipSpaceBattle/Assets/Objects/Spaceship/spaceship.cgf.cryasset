@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="213375b9-ba05-a49c-ec1a-3a758780c847" source=".dae">
+ <Files>
+  <File path="spaceship.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">5</Detail>
+  <Detail name="triangleCount">1184</Detail>
+  <Detail name="vertexCount">2224</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./Spaceship.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

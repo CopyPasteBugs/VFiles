@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="548801dd-2e36-6e5b-736e-a53a352ed5fd" source="particle.tif">
+ <Files>
+  <File path="particle.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">256</Detail>
+  <Detail name="height">256</Detail>
+  <Detail name="mipCount">7</Detail>
+ </Details>
+</AssetMetadata>

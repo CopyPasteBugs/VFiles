@@ -1,0 +1,52 @@
+<AssetMetadata version="0" type="Level" guid="958e5dbb-29ba-dc40-718a-2c65f47965da">
+ <Files>
+  <File path="example.cry"/>
+ </Files>
+ <Dependencies>
+  <Path>%engine%/engineassets/codecoverage/hit.dds</Path>
+  <Path>%engine%/engineassets/codecoverage/pbar.dds</Path>
+  <Path>%engine%/engineassets/codecoverage/unexpected.dds</Path>
+  <Path>%engine%/engineassets/icons/averagememoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/highmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/livepreview.dds</Path>
+  <Path>%engine%/engineassets/icons/lowmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/materials/fog/fogvolumebox.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/fogvolumeellipsoid.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceaninto.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanintolowspec.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanoutof.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanoutoflowspec.mtl</Path>
+  <Path>%engine%/engineassets/materials/material_terrain_default.mtl</Path>
+  <Path>%engine%/engineassets/materials/sky/sky.mtl</Path>
+  <Path>%engine%/engineassets/materials/water/ocean_default.mtl</Path>
+  <Path>%engine%/engineassets/materials/water/wateroceanbottom.mtl</Path>
+  <Path>%engine%/engineassets/objects/default.cgf</Path>
+  <Path>%engine%/engineassets/texturemsg/defaultnouvs.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_12.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_34.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_5.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_grey.dds</Path>
+  <Path>%engine%/engineassets/textures/grey.dds</Path>
+  <Path>%engine%/engineassets/textures/lights/softedge.dds</Path>
+  <Path>%engine%/engineassets/textures/skys/night/half_moon.dds</Path>
+  <Path>audio/ace/default_controls.xml</Path>
+  <Path>engineassets/textures/grey.dds</Path>
+  <Path>hit1.pfx</Path>
+  <Path>libs/environmentpresets/example.xml</Path>
+  <Path>materials/asteroid.mtl</Path>
+  <Path>materials/asteroidsplitted.mtl</Path>
+  <Path>materials/background.mtl</Path>
+  <Path>objects/asteroid/asteroid.cgf</Path>
+  <Path>objects/asteroidsplitted/asteroidsplitted.cgf</Path>
+  <Path>objects/default/editorprimitive.mtl</Path>
+  <Path>objects/default/primitive_box.cgf</Path>
+  <Path>objects/default/primitive_plane_noproxy.cgf</Path>
+  <Path>objects/spaceship/spaceship.cgf</Path>
+  <Path>objects/spaceship/spaceship.mtl</Path>
+  <Path>particle1.pfx</Path>
+  <Path>textures/asteroid/aster_diff.dds</Path>
+  <Path>textures/asteroid/aster_norm.dds</Path>
+  <Path>textures/asteroid/back.dds</Path>
+ </Dependencies>
+ <Details />
+</AssetMetadata>

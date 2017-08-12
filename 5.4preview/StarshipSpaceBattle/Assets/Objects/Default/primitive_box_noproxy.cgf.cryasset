@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="f4db728e-6258-6d03-ebae-0ca17d79f851">
+ <Files>
+  <File path="primitive_box_noproxy.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">1</Detail>
+  <Detail name="triangleCount">12</Detail>
+  <Detail name="vertexCount">24</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>Objects/default/editorprimitive.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

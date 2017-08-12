@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="0dba5f04-4f0a-8b4d-9768-29f4de26356b">
+ <Files>
+  <File path="primitive_cube.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">1</Detail>
+  <Detail name="triangleCount">12</Detail>
+  <Detail name="vertexCount">24</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./editorprimitive.mtl</Path>
+ </Dependencies>
+</AssetMetadata>
