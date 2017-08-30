@@ -1,0 +1,11 @@
+bool CGamePlugin::RegisterFlowNodes()
+{
+	CryRegisterFlowNodes();
+	return true;
+}
+
+bool CGamePlugin::UnregisterFlowNodes()
+{
+	CryUnregisterFlowNodes();
+	return true;
+}
