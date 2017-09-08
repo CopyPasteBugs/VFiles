@@ -13,6 +13,9 @@
 #include <DefaultComponents/Geometry/AdvancedAnimationComponent.h>
 #include <DefaultComponents/Input/InputComponent.h>
 
+#include <CryAnimation/ICryAnimation.h>
+#include "Animation/PoseModifier/LookAtSimple.h"
+
 ////////////////////////////////////////////////////////
 // Represents a player participating in gameplay
 ////////////////////////////////////////////////////////
@@ -136,4 +139,15 @@ protected:
 	Quat m_lookOrientation; //!< Should translate to head orientation in the future
 	float m_horizontalAngularVelocity;
 	MovingAverage<float, 10> m_averagedHorizontalAngularVelocity;
+
+	float m_head = 0;
+
+	std::shared_ptr<AnimPoseModifier::CLookAtSimple> m_lookAtSimple;
+	bool m_lookAtEnabled = true;
+	float m_lookAtWeight = 1.0;
+	float m_lookAtFadeInSpeed = 2.0f;
+	float m_lookAtFadeOutSpeed = 2.0f;
+	Vec3 m_lookAtInterpolatedTargetGlobal = Vec3(0.0f);
+	Vec3 m_lookAtTargetRate = Vec3(0.0f);
+	float m_lookAtTargetSmoothTime = 0.1f;
 };
