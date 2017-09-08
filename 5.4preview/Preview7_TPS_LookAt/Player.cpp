@@ -62,6 +62,17 @@ void CPlayerComponent::Initialize()
 	m_pInputComponent->RegisterAction("player", "mouse_rotatepitch", [this](int activationMode, float value) { m_mouseDeltaRotation.y -= value; });
 	m_pInputComponent->BindAction("player", "mouse_rotatepitch", eAID_KeyboardMouse, EKeyId::eKI_MouseY);
 
+	m_pInputComponent->RegisterAction("player", "headR", [this](int activationMode, float value) { if (m_head > 0.0f) m_head = m_head - 0.05f; });
+	m_pInputComponent->BindAction("player", "headR", eAID_KeyboardMouse, EKeyId::eKI_1);
+
+	m_pInputComponent->RegisterAction("player", "headL", [this](int activationMode, float value) { if (m_head < 1.0f) m_head = m_head + 0.05f; });
+	m_pInputComponent->BindAction("player", "headL", eAID_KeyboardMouse, EKeyId::eKI_2);
+
+	m_pInputComponent->RegisterAction("player", "enableLookAt", [this](int activationMode, float value) { m_lookAtEnabled = !m_lookAtEnabled; });
+	m_pInputComponent->BindAction("player", "enableLookAt", eAID_KeyboardMouse, EKeyId::eKI_3);
+
+
+
 	// Register the shoot action
 	m_pInputComponent->RegisterAction("player", "shoot", [this](int activationMode, float value)
 	{
@@ -100,11 +111,14 @@ void CPlayerComponent::Initialize()
 	m_pInputComponent->BindAction("player", "shoot", eAID_KeyboardMouse, EKeyId::eKI_Mouse1);
 
 	Revive();
+
+	if (!m_lookAtSimple.get())
+		CryCreateClassInstance<AnimPoseModifier::CLookAtSimple>(AnimPoseModifier::CLookAtSimple::GetCID(), m_lookAtSimple);
 }
 
 uint64 CPlayerComponent::GetEventMask() const
 {
-	return BIT64(ENTITY_EVENT_START_GAME) | BIT64(ENTITY_EVENT_UPDATE);
+	return BIT64(ENTITY_EVENT_START_GAME) | BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_PREPHYSICSUPDATE);
 }
 
 void CPlayerComponent::ProcessEvent(SEntityEvent& event)
@@ -133,6 +147,65 @@ void CPlayerComponent::ProcessEvent(SEntityEvent& event)
 
 		// Update the camera component offset
 		UpdateCamera(pCtx->fFrameTime);
+	}
+	break;
+	case ENTITY_EVENT_PREPHYSICSUPDATE: 
+	{
+		float frameTime = gEnv->pTimer->GetFrameTime();
+
+		ICharacterInstance *pCharacter = m_pAnimationComponent->GetCharacter();
+		ISkeletonPose *pSkelPose = pCharacter ? pCharacter->GetISkeletonPose() : NULL;
+		if (pSkelPose) 
+		{
+			//pCharacter->SetFlags(pCharacter->GetFlags()&(~CS_FLAG_UPDATE)); // turn off skeleton update
+
+			IDefaultSkeleton& rIDefaultSkeleton = pCharacter->GetIDefaultSkeleton();
+		
+			int16 m_headBoneID = rIDefaultSkeleton.GetJointIDByName("head");
+			QuatT m_headBone = pSkelPose->GetAbsJointByID(m_headBoneID);
+		
+			IPersistantDebug* debug = gEnv->pGameFramework->GetIPersistantDebug();
+			debug->Begin("skelInfo", true);
+			
+			//debug attachment helpers
+
+			IAttachment *pLeft = pCharacter->GetIAttachmentManager()->GetInterfaceByName("123L");
+			IAttachment *pRight = pCharacter->GetIAttachmentManager()->GetInterfaceByName("123R");
+
+			QuatTS m_helperLPos = pLeft->GetAttWorldAbsolute();
+			QuatTS m_helperRPos = pRight->GetAttWorldAbsolute();
+
+			debug->AddSphere(m_helperLPos.t, 0.1f, ColorF(1.0f), 1);
+			debug->AddSphere(m_helperRPos.t, 0.1f, ColorF(1.0f), 1);
+
+			Vec3 headInWS = m_pEntity->GetWorldTM().TransformPoint(m_headBone.t);
+
+			Vec3 dirL = (m_helperLPos.t - headInWS).GetNormalized();
+			{
+				debug->AddLine(headInWS, headInWS + dirL*2.0f, ColorF(1.0f, 0.0f, 0.0f, 1.0f), 1); // dirL = red color line
+			}
+
+			Vec3 dirR = (m_helperRPos.t - headInWS).GetNormalized();
+			{
+				debug->AddLine(headInWS, headInWS + dirR*2.0f, ColorF(0.0f, 1.0f, 0.0f, 1.0f), 1); // dirR = green color line
+			}
+
+			Vec3 finalDir = Vec3::CreateLerp(dirL, dirR, m_head); // ws dir, m_head range [0..1] managed on keys 1 and 2 
+			Vec3 finalTarget = Vec3::CreateLerp(m_helperLPos.t, m_helperRPos.t, m_head);
+
+			if (m_lookAtEnabled) // Key3 enable/disable
+				m_lookAtWeight = CLAMP(m_lookAtWeight + (frameTime * m_lookAtFadeInSpeed), 0.0f, 1.0f);
+			else
+				m_lookAtWeight = CLAMP(m_lookAtWeight - (frameTime * m_lookAtFadeOutSpeed), 0.0f, 1.0f);
+			
+			SmoothCD(m_lookAtInterpolatedTargetGlobal, m_lookAtTargetRate, frameTime, finalTarget, m_lookAtTargetSmoothTime);
+
+			m_lookAtSimple->SetJointId(m_headBoneID);
+			m_lookAtSimple->SetTargetGlobal(m_lookAtInterpolatedTargetGlobal);
+			m_lookAtSimple->SetWeight(m_lookAtWeight);
+			pCharacter->GetISkeletonAnim()->PushPoseModifier(10, m_lookAtSimple, "testLookAt");
+			
+		}
 	}
 	break;
 	}
