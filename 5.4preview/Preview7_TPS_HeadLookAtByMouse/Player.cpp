@@ -56,11 +56,22 @@ void CPlayerComponent::Initialize()
 	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) { HandleInputFlagChange((TInputFlags)EInputFlag::MoveBack, activationMode);  });
 	m_pInputComponent->BindAction("player", "moveback", eAID_KeyboardMouse, EKeyId::eKI_S);
 
-	m_pInputComponent->RegisterAction("player", "mouse_rotateyaw", [this](int activationMode, float value) { m_mouseDeltaRotation.x -= value; });
+	m_pInputComponent->RegisterAction("player", "mouse_rotateyaw", [this](int activationMode, float value) { m_mouseDeltaRotation.x -= value; m_copyDeltaRotation.x = value;  });
 	m_pInputComponent->BindAction("player", "mouse_rotateyaw", eAID_KeyboardMouse, EKeyId::eKI_MouseX);
 
-	m_pInputComponent->RegisterAction("player", "mouse_rotatepitch", [this](int activationMode, float value) { m_mouseDeltaRotation.y -= value; });
+	m_pInputComponent->RegisterAction("player", "mouse_rotatepitch", [this](int activationMode, float value) { m_mouseDeltaRotation.y -= value; m_copyDeltaRotation.y = value; });
 	m_pInputComponent->BindAction("player", "mouse_rotatepitch", eAID_KeyboardMouse, EKeyId::eKI_MouseY);
+
+	m_pInputComponent->RegisterAction("player", "headR", [this](int activationMode, float value) { if (m_head > 0.0f) m_head = m_head - 0.05f; });
+	m_pInputComponent->BindAction("player", "headR", eAID_KeyboardMouse, EKeyId::eKI_1);
+
+	m_pInputComponent->RegisterAction("player", "headL", [this](int activationMode, float value) { if (m_head < 1.0f) m_head = m_head + 0.05f; });
+	m_pInputComponent->BindAction("player", "headL", eAID_KeyboardMouse, EKeyId::eKI_2);
+
+	m_pInputComponent->RegisterAction("player", "enableLookAt", [this](int activationMode, float value) { m_lookAtEnabled = !m_lookAtEnabled; });
+	m_pInputComponent->BindAction("player", "enableLookAt", eAID_KeyboardMouse, EKeyId::eKI_3);
+
+
 
 	// Register the shoot action
 	m_pInputComponent->RegisterAction("player", "shoot", [this](int activationMode, float value)
@@ -100,11 +111,14 @@ void CPlayerComponent::Initialize()
 	m_pInputComponent->BindAction("player", "shoot", eAID_KeyboardMouse, EKeyId::eKI_Mouse1);
 
 	Revive();
+
+	if (!m_lookAtSimple.get())
+		CryCreateClassInstance<AnimPoseModifier::CLookAtSimple>(AnimPoseModifier::CLookAtSimple::GetCID(), m_lookAtSimple);
 }
 
 uint64 CPlayerComponent::GetEventMask() const
 {
-	return BIT64(ENTITY_EVENT_START_GAME) | BIT64(ENTITY_EVENT_UPDATE);
+	return BIT64(ENTITY_EVENT_START_GAME) | BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_PREPHYSICSUPDATE);
 }
 
 void CPlayerComponent::ProcessEvent(SEntityEvent& event)
@@ -114,6 +128,7 @@ void CPlayerComponent::ProcessEvent(SEntityEvent& event)
 	case ENTITY_EVENT_START_GAME:
 	{
 		// Revive the entity when gameplay starts
+		m_YPR = Ang3(GetEntity()->GetWorldRotation());
 		Revive();
 	}
 	break;
@@ -133,6 +148,70 @@ void CPlayerComponent::ProcessEvent(SEntityEvent& event)
 
 		// Update the camera component offset
 		UpdateCamera(pCtx->fFrameTime);
+	}
+	break;
+	case ENTITY_EVENT_PREPHYSICSUPDATE: 
+	{
+		//RotateOnHelpers()
+
+		float frameTime = gEnv->pTimer->GetFrameTime();
+
+		ICharacterInstance *pCharacter = m_pAnimationComponent->GetCharacter();
+		ISkeletonPose *pSkelPose = pCharacter ? pCharacter->GetISkeletonPose() : NULL;
+		if (pSkelPose) 
+		{
+			//pCharacter->SetFlags(pCharacter->GetFlags()&(~CS_FLAG_UPDATE)); // turn off skeleton update
+
+			IDefaultSkeleton& rIDefaultSkeleton = pCharacter->GetIDefaultSkeleton();
+		
+			int16 m_headBoneID = rIDefaultSkeleton.GetJointIDByName("head");
+			QuatT m_headBone = pSkelPose->GetAbsJointByID(m_headBoneID);
+			Vec3 headInWS = m_pEntity->GetWorldTM().TransformPoint(m_headBone.t);
+			
+			IPersistantDebug* debug = gEnv->pGameFramework->GetIPersistantDebug();
+			debug->Begin("skelInfo", true);
+			
+			//calc local(entity space)
+			const float rotationSpeed = 0.1; //factor
+			m_YPR.x -= m_copyDeltaRotation.x * rotationSpeed  * frameTime; // m_copyDeltaRotation are get value from input (not accumulated)
+			m_YPR.y -= m_copyDeltaRotation.y * rotationSpeed * frameTime;
+			m_YPR.z = 0.f;
+
+			// clip follow FOVs for char's head pose mod
+			m_YPR.x = CLAMP(m_YPR.x, DEG2RAD(-60.0f), DEG2RAD(60.0f)); // horizont clamp
+			m_YPR.y = CLAMP(m_YPR.y, DEG2RAD(-45.0f), DEG2RAD(45.0f)); // vert clamp
+			
+			// get quat from ang
+			Quat localOrientation = Quat(CCamera::CreateOrientationYPR(m_YPR));
+			// transform local forward with our quat
+			Vec3 localForward = localOrientation * Vec3(0, 1, 0);
+
+			// get character's entity matrix
+			Matrix34 ToWPSpace = GetEntity()->GetWorldTM();
+
+			// transform local dir into wp dir with multiplying onto char's matrix 
+			Vec3 finalDir = ToWPSpace.TransformVector(localForward);
+			
+			// just for sure idenity dir
+			Vec3 forward = finalDir.GetNormalized();
+
+			debug->AddLine(headInWS, headInWS + forward * 5.0, ColorF(1,0, 0,1), 1.0f);
+			debug->AddSphere(headInWS + forward * 5.0f, 0.1f, ColorF(1.0f, 0.0f, 0.0f, 1.0f), 1.0f);
+
+			Vec3 finalTarget = headInWS + forward * 5.0f;
+
+			if (m_lookAtEnabled) // Key3 enable/disable
+				m_lookAtWeight = CLAMP(m_lookAtWeight + (frameTime * m_lookAtFadeInSpeed), 0.0f, 1.0f);
+			else
+				m_lookAtWeight = CLAMP(m_lookAtWeight - (frameTime * m_lookAtFadeOutSpeed), 0.0f, 1.0f);
+			
+			SmoothCD(m_lookAtInterpolatedTargetGlobal, m_lookAtTargetRate, frameTime, finalTarget, m_lookAtTargetSmoothTime);
+			m_lookAtSimple->SetJointId(m_headBoneID);
+			m_lookAtSimple->SetTargetGlobal(m_lookAtInterpolatedTargetGlobal);
+			m_lookAtSimple->SetWeight(m_lookAtWeight);
+			pCharacter->GetISkeletonAnim()->PushPoseModifier(0, m_lookAtSimple, "testLookAt");
+			
+		}
 	}
 	break;
 	}
@@ -280,6 +359,65 @@ void CPlayerComponent::Revive()
 	m_lookOrientation = IDENTITY;
 	m_horizontalAngularVelocity = 0.0f;
 	m_averagedHorizontalAngularVelocity.Reset();
+
+	m_copyDeltaRotation = ZERO;
+}
+
+void CPlayerComponent::RotateOnHelpers()
+{
+	float frameTime = gEnv->pTimer->GetFrameTime();
+
+	ICharacterInstance *pCharacter = m_pAnimationComponent->GetCharacter();
+	ISkeletonPose *pSkelPose = pCharacter ? pCharacter->GetISkeletonPose() : NULL;
+	if (pSkelPose)
+	{
+		//pCharacter->SetFlags(pCharacter->GetFlags()&(~CS_FLAG_UPDATE)); // turn off skeleton update
+
+		IDefaultSkeleton& rIDefaultSkeleton = pCharacter->GetIDefaultSkeleton();
+
+		int16 m_headBoneID = rIDefaultSkeleton.GetJointIDByName("head");
+		QuatT m_headBone = pSkelPose->GetAbsJointByID(m_headBoneID);
+
+		IPersistantDebug* debug = gEnv->pGameFramework->GetIPersistantDebug();
+		debug->Begin("skelInfo", true);
+
+		//debug attachment helpers
+
+		IAttachment *pLeft = pCharacter->GetIAttachmentManager()->GetInterfaceByName("123L");
+		IAttachment *pRight = pCharacter->GetIAttachmentManager()->GetInterfaceByName("123R");
+
+		QuatTS m_helperLPos = pLeft->GetAttWorldAbsolute();
+		QuatTS m_helperRPos = pRight->GetAttWorldAbsolute();
+
+		debug->AddSphere(m_helperLPos.t, 0.1f, ColorF(1.0f), 1);
+		debug->AddSphere(m_helperRPos.t, 0.1f, ColorF(1.0f), 1);
+
+		Vec3 headInWS = m_pEntity->GetWorldTM().TransformPoint(m_headBone.t);
+
+		Vec3 dirL = (m_helperLPos.t - headInWS).GetNormalized();
+		{
+			debug->AddLine(headInWS, headInWS + dirL*2.0f, ColorF(1.0f, 0.0f, 0.0f, 1.0f), 1); // dirL = red color line
+		}
+
+		Vec3 dirR = (m_helperRPos.t - headInWS).GetNormalized();
+		{
+			debug->AddLine(headInWS, headInWS + dirR*2.0f, ColorF(0.0f, 1.0f, 0.0f, 1.0f), 1); // dirR = green color line
+		}
+
+		Vec3 finalDir = Vec3::CreateLerp(dirL, dirR, m_head); // ws dir, m_head range [0..1] managed on keys 1 and 2 
+		Vec3 finalTarget = Vec3::CreateLerp(m_helperLPos.t, m_helperRPos.t, m_head);
+
+		if (m_lookAtEnabled) // Key3 enable/disable
+			m_lookAtWeight = CLAMP(m_lookAtWeight + (frameTime * m_lookAtFadeInSpeed), 0.0f, 1.0f);
+		else
+			m_lookAtWeight = CLAMP(m_lookAtWeight - (frameTime * m_lookAtFadeOutSpeed), 0.0f, 1.0f);
+
+		SmoothCD(m_lookAtInterpolatedTargetGlobal, m_lookAtTargetRate, frameTime, finalTarget, m_lookAtTargetSmoothTime);
+		m_lookAtSimple->SetJointId(m_headBoneID);
+		m_lookAtSimple->SetTargetGlobal(m_lookAtInterpolatedTargetGlobal);
+		m_lookAtSimple->SetWeight(m_lookAtWeight);
+		pCharacter->GetISkeletonAnim()->PushPoseModifier(0, m_lookAtSimple, "testLookAt");
+	}
 }
 
 void CPlayerComponent::SpawnAtSpawnPoint()
