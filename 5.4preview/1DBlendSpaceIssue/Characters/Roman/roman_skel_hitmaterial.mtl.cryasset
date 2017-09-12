@@ -1,0 +1,9 @@
+<AssetMetadata version="0" type="Material" guid="1b4fdf97-9e75-e9fa-7a13-6000011601d9">
+ <Files>
+  <File path="roman_skel_hitmaterial.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">2</Detail>
+  <Detail name="textureCount">0</Detail>
+ </Details>
+</AssetMetadata>

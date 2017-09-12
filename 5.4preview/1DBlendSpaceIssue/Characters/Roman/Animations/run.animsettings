@@ -1,0 +1,14 @@
+{
+	"build": {
+		"additive": false,
+		"skeletonAlias": "Roman_Skel",
+		"compression": {
+			"compressionValue": 0,
+			"positionEpsilon": 0.001,
+			"rotationEpsilon": 0.00001,
+			"scaleEpsilon": 0.00001,
+			"perJointSettings": [ ]
+		},
+		"tags": [ ]
+	}
+}

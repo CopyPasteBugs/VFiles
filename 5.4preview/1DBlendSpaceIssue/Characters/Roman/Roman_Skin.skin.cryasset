@@ -1,0 +1,15 @@
+<AssetMetadata version="0" type="SkinnedMesh" guid="25fe73a3-0165-680a-2f07-8a5aab0a46f8" source="RomanToCryengine.fbx">
+ <Files>
+  <File path="Roman_Skin.skin"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">3</Detail>
+  <Detail name="triangleCount">4937</Detail>
+  <Detail name="vertexCount">3249</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+  <Detail name="bonesCount">24</Detail>
+ </Details>
+ <Dependencies>
+  <Path>%ENGINE%/EngineAssets/Materials/material_default.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

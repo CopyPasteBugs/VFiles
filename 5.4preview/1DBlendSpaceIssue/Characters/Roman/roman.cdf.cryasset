@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Character" guid="52b2eac2-0d6d-4857-1c51-a212c856f138">
+ <Files>
+  <File path="roman.cdf"/>
+ </Files>
+ <Details />
+ <Dependencies>
+  <Path>objects/Characters/Roman/Roman_Skel.chr</Path>
+  <Path>objects/Characters/Roman/Roman_Skin.skin</Path>
+ </Dependencies>
+</AssetMetadata>
