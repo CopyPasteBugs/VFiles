@@ -73,7 +73,7 @@ uint64 CSplineComponent::GetEventMask() const
 {
 	return BIT64(ENTITY_EVENT_START_GAME) | BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_TIMER) | BIT64(ENTITY_EVENT_COMPONENT_PROPERTY_CHANGED);
 }
-
+#ifndef RELEASE
 void CSplineComponent::Render(const IEntity & entity, const IEntityComponent & component, SEntityPreviewContext & context) const
 {
 	if (context.bSelected)
@@ -107,6 +107,7 @@ void CSplineComponent::Render(const IEntity & entity, const IEntityComponent & c
 		//render->DrawAABB(aabb, false, context.debugDrawInfo.color, EBoundingBoxDrawStyle::eBBD_Faceted);
 	}
 }
+#endif
 
 void CSplineComponent::AddPoint(const Vec3 newPoint)
 {
