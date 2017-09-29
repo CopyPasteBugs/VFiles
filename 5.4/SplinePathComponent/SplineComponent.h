@@ -44,11 +44,31 @@ struct SSplineMovementOptions
 
 		desc.SetGUID("{669C86E8-9A5D-4198-98D9-2E390E5A53D7}"_cry_guid);
 		desc.AddMember(&SSplineMovementOptions::m_speed, 'spee', "Speed", "Speed", nullptr, 1.0f);
-		desc.AddMember(&SSplineMovementOptions::m_fixedSpeed, 'cspe', "ConstSpeed", "Fixed Speed", nullptr, false);
+		desc.AddMember(&SSplineMovementOptions::m_fixedSpeed, 'cspe', "FixedSpeed", "Fixed Speed", nullptr, false);
 	}
 
 	Schematyc::Range<0, 100> m_speed = 1.f;
 	bool m_fixedSpeed = false;
+};
+
+struct SSplineAlignmentOptions
+{
+	inline bool operator==(const SSplineAlignmentOptions &rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+
+	static void ReflectType(Schematyc::CTypeDesc<SSplineAlignmentOptions>& desc)
+	{
+
+		desc.SetGUID("{C7759D34-DA37-45DD-8813-FE7C9E3611F2}"_cry_guid);
+		desc.AddMember(&SSplineAlignmentOptions::m_enabled, 'enab', "Enabled", "Enabled", nullptr, false);
+		desc.AddMember(&SSplineAlignmentOptions::m_dir, 'adir', "AlignmentDirection", "Alignment direction", nullptr, Vec3(0.0f,0.0f,1.0f));
+		desc.AddMember(&SSplineAlignmentOptions::m_motionAlignment, 'mali', "MotionAlignment", "Motion Alignment", nullptr, false);
+		desc.AddMember(&SSplineAlignmentOptions::m_motionBlendWeight, 'weig', "BlendWeight", "Blend Weight", nullptr, 0.05f);
+
+	}
+	bool m_enabled = false;
+	bool m_motionAlignment = false;
+	Schematyc::Range<0, 1> m_motionBlendWeight = 0.05f;
+	Vec3 m_dir = Vec3(0.0f, 0.0f, 1.0f);
 };
 
 class CSplineComponent : 
@@ -77,7 +97,8 @@ public:
 		desc.AddMember(&CSplineComponent::m_regularRebind, 'regr', "UpdateSplinesPoints", "Update splines points", nullptr, false);
 		desc.AddMember(&CSplineComponent::m_useCyclePath, 'cycl', "SetCyclePath", "Set cycle path", nullptr, false);
 		desc.AddMember(&CSplineComponent::m_splineSampleOptions, 'sopt', "SampleOptions", "SampleOptions", "", SSplineSampleOptions());
-		desc.AddMember(&CSplineComponent::m_splineMovementOptions, 'mopt', "MovementOtions", "MovementOptions", nullptr, SSplineMovementOptions());
+		desc.AddMember(&CSplineComponent::m_splineMovementOptions, 'mopt', "MovementOptions", "MovementOptions", nullptr, SSplineMovementOptions());
+		desc.AddMember(&CSplineComponent::m_splineAlignmentOptions, 'alig', "AlignmentOptions", "AlignmentOptions", nullptr, SSplineAlignmentOptions());
 		desc.AddMember(&CSplineComponent::m_moving, 'move', "EnableMoving", "Enable moving", nullptr, false);
 		desc.AddMember(&CSplineComponent::m_rebindButton, 'rebb', "Rebind", "Rebind", "Rebind the linked entites manually", Serialization::FunctorActionButton<std::function<void()>>());
 		desc.AddMember(&CSplineComponent::m_resetMovementButton, 'rese', "ResetMovement", "ResetMovement", "ResetMovement to start of the Spline", Serialization::FunctorActionButton<std::function<void()>>());
@@ -125,7 +146,7 @@ public:
 	bool IsFinished() const { return m_traveled >= 1.0f; }
 	void Move(float fFrameTime);
 	void EnableMovement(bool state) { m_moving = state; };
-
+	
 	std::vector<Vec3> m_points;
 	ESplineType m_splineType = ESplineType::LINEAR;
 	bool m_regularRebind = false;
@@ -137,9 +158,11 @@ public:
 	std::vector<Vec3> m_pointsSampled;
 	SSplineSampleOptions m_splineSampleOptions;
 	SSplineMovementOptions m_splineMovementOptions;
+	SSplineAlignmentOptions m_splineAlignmentOptions;
 
 	float m_length = 0.f;
 	float m_elapsed = 0.0f;
 	float m_traveled = 0.0f;
 	bool m_moving = false;
+	Vec3 m_prev_point = Vec3(0.0f);
 };

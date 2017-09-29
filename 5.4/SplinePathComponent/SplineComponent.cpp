@@ -51,6 +51,9 @@ void CSplineComponent::ProcessEvent(SEntityEvent & event)
 
 		if (m_splineSampleOptions.m_useSampledSpline)
 			Resample();
+
+		if (m_splineAlignmentOptions.m_enabled)
+			m_splineAlignmentOptions.m_dir = m_splineAlignmentOptions.m_dir.GetNormalized();
 	
 	}
 	break;
@@ -375,6 +378,30 @@ void CSplineComponent::Move(float fFrameTime)
 	else
 		pos = GetPoint(m_traveled);
 
-	m_pEntity->SetPos(pos);
+	if (m_splineAlignmentOptions.m_enabled)
+	{
+		Quat q = IDENTITY;
 
+		if (m_splineAlignmentOptions.m_motionAlignment) 
+		{
+			Vec3 motionDir = (pos - m_prev_point).GetNormalized();
+			q = Quat::CreateRotationVDir(motionDir);
+		}
+		else
+		{
+			q = Quat::CreateRotationVDir(m_splineAlignmentOptions.m_dir);
+		}
+
+		Quat p = m_pEntity->GetRotation();
+		Vec3 s = m_pEntity->GetScale();
+		Quat f = Quat::CreateSlerp(p, q, m_splineAlignmentOptions.m_motionBlendWeight);
+		m_pEntity->SetPosRotScale(pos, f, s);
+
+	}
+	else
+	{
+		m_pEntity->SetPos(pos);
+	}
+
+	m_prev_point = pos;
 }
