@@ -91,7 +91,7 @@ public:
 		desc.SetLabel("SplineComponent");
 		desc.SetDescription("CSplineComponent");
 		desc.SetIcon("icons:General/Core.ico");
-		desc.SetComponentFlags({ IEntityComponent::EFlags::ClientOnly });
+		desc.SetComponentFlags({ IEntityComponent::EFlags::ClientOnly, IEntityComponent::EFlags::Socket });
 
 		desc.AddMember(&CSplineComponent::m_splineType, 'spty', "SplineType", "Spline type", nullptr, ESplineType::LINEAR);
 		desc.AddMember(&CSplineComponent::m_regularRebind, 'regr', "UpdateSplinesPoints", "Update splines points", nullptr, false);
@@ -165,4 +165,5 @@ public:
 	float m_traveled = 0.0f;
 	bool m_moving = false;
 	Vec3 m_prev_point = Vec3(0.0f);
+	bool m_FirstFrame = false;
 };

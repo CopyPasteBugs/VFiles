@@ -11,6 +11,10 @@ void CSplineComponent::Initialize()
 	m_resetMovementButton = Serialization::ActionButton(std::function<void()>([this]() { ResetMovement(); }));
 
 	m_pEntity->SetUpdatePolicy(EEntityUpdatePolicy::ENTITY_UPDATE_VISIBLE);
+#ifndef RELEASE
+	if (gEnv->IsEditor())
+		m_pEntity->SetTimer(2, 100);
+#endif
 }
 
 void CSplineComponent::ProcessEvent(SEntityEvent & event)
@@ -29,12 +33,26 @@ void CSplineComponent::ProcessEvent(SEntityEvent & event)
 	break;
 	case ENTITY_EVENT_TIMER:
 	{
-		//int TimerId = (int)event.nParam[0];	
+#ifndef RELEASE
+		int TimerId = (int)event.nParam[0];	
+
+		if(gEnv->IsEditor())
+			if (TimerId == 2)
+			{
+				m_FirstFrame = true;
+				Rebind();
+				Resample();
+				m_length = GetLength();
+			}
+#endif // !RELEASE
+		
 		if (m_regularRebind)
 		{
 			m_pEntity->SetTimer(1, 100); // Update timer
 			Rebind();
 		}
+
+
 	}
 	break;
 	case ENTITY_EVENT_COMPONENT_PROPERTY_CHANGED:
