@@ -15,8 +15,9 @@ select proper action for it (in actions window)
 delete old group for armature, if it already assigned
 then BCRY add animation node
 make name for new expotred animation the same as action name
-fix the length of the timeline (end time), (it's important! othervise you got pause(gap) in Character Tool at the end of animation)
+fix the length of the timeline (end time), (it's important! otherwise you got pause(gap) in Character Tool at the end of animation)
 
+note: about Locomotion bone I think the Roll of bone is important, so better keep it(axis orientation) as SDKPlayer's root bone.
 
 
 
